@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المحاضرة 11 — Lists & Scrollbars | Sunshine T Academy</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23041c16'/%3E%3Cg fill='%23a3e635'%3E%3Crect x='10' y='14' width='30' height='5' rx='2.5'/%3E%3Crect x='10' y='25' width='30' height='5' rx='2.5' opacity='.75'/%3E%3Crect x='10' y='36' width='30' height='5' rx='2.5' opacity='.5'/%3E%3Crect x='10' y='47' width='30' height='5' rx='2.5' opacity='.3'/%3E%3C/g%3E%3Crect x='46' y='12' width='7' height='42' rx='3.5' fill='%230b3b2e'/%3E%3Crect x='46' y='12' width='7' height='18' rx='3.5' fill='%23f59e0b'/%3E%3Ccircle cx='25' cy='9' r='4' fill='%23fbbf24'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pine0:#041c16; --pine1:#07271f; --pine2:#0b3b2e; --pine3:#10513f;
+  --lime:#a3e635; --lime2:#65a30d; --limeSoft:#ecfccb;
+  --mint:#2dd4bf; --mint2:#0d9488; --mintSoft:#ccfbf1;
+  --amber:#f59e0b; --amber2:#b45309; --amberSoft:#fef3c7;
+  --rose:#f43f5e; --rose2:#be123c; --roseSoft:#ffe4e6;
+  --sky:#38bdf8; --sky2:#0284c7; --skySoft:#e0f2fe;
+  --paper:#fffdf7; --cool:#f3f8f4; --ink:#0c2b22; --text:#28453b; --mut:#6b8a7e; --line:#dbe8e0;
+  --code-bg:#08211a; --code-tx:#dcefe4;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scrollbar-color:#65a30d #041c16;scrollbar-width:thin}
+body{font-family:'Cairo','Segoe UI',Tahoma,sans-serif;color:var(--text);line-height:1.85;min-height:100vh;padding-bottom:60px;overflow-x:hidden;
+  background:linear-gradient(162deg,var(--pine0) 0%,var(--pine1) 34%,var(--pine2) 68%,#124a3a 100%)}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+  radial-gradient(780px 470px at 88% -8%,rgba(163,230,53,.18),transparent 62%),
+  radial-gradient(700px 470px at 3% 106%,rgba(45,212,191,.20),transparent 62%),
+  radial-gradient(520px 360px at 50% 48%,rgba(245,158,11,.10),transparent 70%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.75;
+  background-image:
+    repeating-linear-gradient(180deg,rgba(163,230,53,.055) 0 1px,transparent 1px 34px),
+    repeating-linear-gradient(90deg,rgba(45,212,191,.04) 0 1px,transparent 1px 120px);
+  mask-image:radial-gradient(ellipse at 50% 18%,#000 32%,transparent 84%)}
+.shelf{position:fixed;z-index:-1;border-radius:7px;border:1px solid rgba(163,230,53,.2);background:rgba(163,230,53,.045);animation:drift 15s ease-in-out infinite;pointer-events:none;overflow:hidden;padding:6px}
+.shelf i{display:block;height:4px;border-radius:2px;background:rgba(163,230,53,.28);margin-bottom:5px}
+.shelf i:nth-child(2){width:80%;opacity:.7}.shelf i:nth-child(3){width:60%;opacity:.45}
+.shelf b{position:absolute;top:5px;bottom:5px;left:5px;width:5px;border-radius:3px;background:rgba(245,158,11,.4)}
+@keyframes drift{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-24px) rotate(1.5deg)}}
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:#041c16}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--lime2),var(--mint2));border-radius:10px;border:3px solid #041c16}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--lime),var(--mint))}
+/* nav */
+.topnav{position:sticky;top:0;z-index:200;display:flex;align-items:center;gap:14px;padding:10px 22px;background:rgba(4,28,22,.9);backdrop-filter:blur(14px);border-bottom:1px solid rgba(163,230,53,.3)}
+.brand{display:flex;align-items:center;gap:9px;color:#fff;font-weight:800;white-space:nowrap}
+.brand svg{width:32px;height:32px;filter:drop-shadow(0 0 9px rgba(163,230,53,.6))}
+.brand .sun{transform-origin:25px 9px;animation:spin 24s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.links{display:flex;gap:3px;margin-inline-start:auto;flex-wrap:wrap}
+.links a{color:#c6f0d8;text-decoration:none;font-size:.8rem;font-weight:700;padding:5px 11px;border-radius:999px;transition:.2s}
+.links a:hover,.links a.on{background:rgba(163,230,53,.24);color:#fff}
+#readbar{position:absolute;bottom:-3px;right:0;height:3px;width:0;background:linear-gradient(90deg,var(--lime),var(--mint),var(--amber));transition:width .15s}
+/* container */
+.container{max-width:1120px;margin:26px auto;background:var(--paper);border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(1,14,10,.66),0 0 0 1px rgba(163,230,53,.2)}
+.appbar{display:flex;align-items:center;gap:10px;background:#041c16;color:#8fb8a5;padding:9px 16px;font-size:.8rem;direction:ltr}
+.dots{display:flex;gap:7px}
+.dots b{width:13px;height:13px;border-radius:50%;cursor:pointer;transition:.2s}
+.dots b:hover{transform:scale(1.25)}
+.d-r{background:#ff5f57}.d-y{background:#febc2e}.d-g{background:#28c840}
+.fname{margin-left:10px;font-family:'JetBrains Mono',monospace}
+.acad{margin-left:auto;color:var(--lime);font-weight:700}
+/* header */
+.header{background:linear-gradient(135deg,var(--mint2) 0%,var(--pine3) 46%,var(--lime2) 100%);color:#fff;padding:44px 34px 38px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(180deg,rgba(255,255,255,.075) 0 1px,transparent 1px 26px)}
+.header::after{content:"📜";position:absolute;font-size:10rem;opacity:.13;bottom:-32px;right:-12px;transform:rotate(-10deg)}
+.header>*{position:relative;z-index:1}
+.lvl{display:inline-block;background:rgba(4,28,22,.34);border:1px solid rgba(163,230,53,.7);padding:6px 20px;border-radius:999px;font-weight:800;font-size:.9rem;margin-bottom:14px;color:#f2ffe0}
+.big{font-size:4.2rem;display:block;animation:bob 3.4s ease-in-out infinite;filter:drop-shadow(0 8px 18px rgba(0,0,0,.32))}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+.header h1{font-size:2.25rem;font-weight:900;margin:8px 0 6px;text-shadow:0 3px 10px rgba(0,0,0,.3)}
+.sub{font-size:1.13rem;opacity:.97;font-weight:600}
+.quote{display:inline-block;margin-top:16px;background:rgba(4,28,22,.3);border:1px dashed rgba(163,230,53,.65);padding:9px 22px;border-radius:12px;font-style:italic}
+.meta,.plan{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:18px}
+.meta span{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);padding:5px 15px;border-radius:999px;font-size:.85rem;font-weight:700}
+.plan b{background:rgba(4,28,22,.42);padding:4px 12px;border-radius:8px;font-size:.78rem}
+/* content */
+.content{padding:34px}
+section{background:var(--cool);border-radius:16px;border-right:6px solid var(--mint2);padding:28px;margin-bottom:32px;scroll-margin-top:84px}
+section h2{color:var(--mint2);font-size:1.55rem;font-weight:900;padding-bottom:10px;border-bottom:3px solid var(--mint2);margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+section h3{color:var(--pine3);font-size:1.2rem;font-weight:800;margin:20px 0 10px}
+section h4{font-size:1.04rem;margin:16px 0 8px}
+section p{font-size:1.02rem;color:var(--text);margin-bottom:12px}
+section ul,section ol{padding-right:24px;margin:10px 0}
+section li{margin-bottom:8px}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s,transform .6s}
+.reveal.on{opacity:1;transform:none}
+.badge{display:inline-block;padding:4px 15px;border-radius:999px;color:#fff;font-weight:800;font-size:.82rem}
+.b1{background:var(--lime2)}.b2{background:var(--amber2)}.b3{background:var(--rose2)}.b4{background:var(--sky2)}
+.callout{padding:16px 20px;border-radius:12px;margin:16px 0;border-right:5px solid;font-size:.97rem}
+.c-info{background:var(--skySoft);border-color:var(--sky2)}
+.c-tip{background:var(--limeSoft);border-color:var(--lime2)}
+.c-warn{background:var(--roseSoft);border-color:var(--rose2)}
+.c-star{background:var(--amberSoft);border-color:var(--amber2)}
+.c-mint{background:var(--mintSoft);border-color:var(--mint2)}
+.callout b{display:block;margin-bottom:5px}
+.review{background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid var(--amber);border-radius:14px;padding:20px;margin:14px 0}
+.review h3{color:#92400e;margin-top:0}
+.review ul{list-style:none;padding:0}
+.review li{padding:7px 4px;border-bottom:1px dashed #d97706}
+.review li:last-child{border:none}
+.obj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:14px;margin-top:14px}
+.obj{background:#fff;border-radius:14px;padding:18px;border-top:4px solid var(--lime2);box-shadow:0 4px 14px rgba(101,163,13,.13);transition:.25s}
+.obj:hover{transform:translateY(-5px);box-shadow:0 10px 24px rgba(101,163,13,.24)}
+.obj .ic{font-size:1.9rem}
+.obj h4{color:var(--lime2);font-size:1rem;margin:6px 0 4px}
+.obj p{font-size:.86rem;margin:0;color:var(--mut)}
+table.tbl{width:100%;border-collapse:collapse;margin:14px 0;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08);font-size:.92rem}
+.tbl th{background:linear-gradient(135deg,var(--pine3),var(--mint2));color:#fff;padding:11px 12px;font-weight:800;text-align:right}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:nth-child(even) td{background:#f7fbf8}
+.tbl tr:hover td{background:var(--limeSoft)}
+code{background:var(--limeSoft);color:#3f6212;padding:2px 7px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.85em;direction:ltr;display:inline-block}
+.codewrap{margin:16px 0;border-radius:12px;overflow:hidden;border:2px solid #0b3b2e;box-shadow:0 6px 18px rgba(4,28,22,.32)}
+.codebar{display:flex;align-items:center;justify-content:space-between;background:#0b3b2e;color:#c6f0d8;padding:7px 14px;font-size:.8rem;direction:ltr;gap:10px}
+.codebar .fn{font-family:'JetBrains Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copybtn{background:linear-gradient(135deg,var(--lime2),#4d7c0f);color:#fff;border:none;padding:5px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:800;font-size:.78rem;transition:.2s;flex:none}
+.copybtn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(101,163,13,.5)}
+pre.code{background:var(--code-bg);color:var(--code-tx);padding:18px 20px;font-family:'JetBrains Mono',Consolas,monospace;font-size:.9rem;line-height:1.8;direction:ltr;text-align:left;white-space:pre;overflow-x:auto}
+pre.code::-webkit-scrollbar{height:10px}
+pre.code::-webkit-scrollbar-track{background:#04150f}
+pre.code::-webkit-scrollbar-thumb{background:#2f6b52;border-radius:8px;border:2px solid #04150f}
+.kw{color:#a3e635;font-weight:bold}.fnc{color:#fbbf24}.str{color:#7dd3fc}.num{color:#f9a8d4}.cmt{color:#7f9c8d;font-style:italic}
+.btn{border:none;padding:10px 18px;border-radius:10px;font-family:inherit;font-weight:800;font-size:.86rem;cursor:pointer;transition:.2s;color:#fff}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn:active{transform:scale(.96)}
+.btn-l{background:linear-gradient(135deg,var(--lime2),#4d7c0f)}
+.btn-m{background:linear-gradient(135deg,var(--mint2),#0f766e)}
+.btn-a{background:linear-gradient(135deg,var(--amber),var(--amber2))}
+.btn-r{background:linear-gradient(135deg,var(--rose),var(--rose2))}
+.btn-s{background:linear-gradient(135deg,var(--sky),var(--sky2))}
+.btn-ghost{background:#e6f4ea;color:var(--pine3)}
+/* ===== LAB ===== */
+.lab{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;margin-top:16px}
+.stage{position:relative;border-radius:14px;padding:16px;border:3px solid #0b3b2e;min-height:440px;display:grid;place-items:center;
+  background-image:repeating-linear-gradient(180deg,rgba(163,230,53,.06) 0 1px,transparent 1px 30px),linear-gradient(155deg,#041c16,#0b3b2e 60%,#124a3a)}
+.tkwin{width:100%;max-width:470px;border-radius:10px;overflow:hidden;box-shadow:0 18px 42px rgba(0,0,0,.6);border:1px solid rgba(163,230,53,.28);background:#f3f8f4}
+.tkbar{display:flex;align-items:center;gap:7px;background:#07271f;color:#dcfce7;padding:7px 10px;direction:ltr;font-size:.76rem;font-weight:700}
+.tkbar .tt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tkbar .mb{width:19px;height:17px;border-radius:4px;background:#10513f;color:#dcfce7;border:none;font-size:.6rem;display:grid;place-items:center;cursor:default}
+.tkbar .mb.x{background:#7f1d2e;color:#fecdd3}
+.tkbody{padding:12px;display:flex;flex-direction:column;gap:9px}
+.addrow{display:flex;gap:6px}
+.addrow input{flex:1;padding:7px 10px;border:2px solid #bcd9c6;border-radius:7px;font-family:inherit;font-weight:700;font-size:.85rem;outline:none;background:#fff;color:var(--ink);min-width:0}
+.addrow input:focus{border-color:var(--lime2)}
+.addrow input[type=number]{flex:0 0 62px;text-align:center}
+.addrow button{border:none;border-radius:7px;padding:7px 13px;background:linear-gradient(135deg,var(--lime2),#4d7c0f);color:#fff;font-family:inherit;font-weight:800;font-size:.82rem;cursor:pointer;flex:none}
+.addrow button:active{transform:scale(.95)}
+.listwrap{display:flex;gap:0;border:2px solid #bcd9c6;border-radius:8px;overflow:hidden;background:#fff}
+.tvhead{display:grid;background:#e6f4ea;border-bottom:2px solid #bcd9c6;font-size:.74rem;font-weight:900;color:var(--pine3)}
+.tvhead span{padding:6px 8px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:4px;border-left:1px solid #cfe4d6}
+.tvhead span:last-child{border-left:none}
+.tvhead span:hover{background:#d6ecdd}
+.tvhead span .ar{color:var(--lime2);font-size:.7rem}
+.lbscroll{flex:1;overflow-y:scroll;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none;min-width:0}
+.lbscroll::-webkit-scrollbar{display:none}
+.lbrow{display:flex;align-items:center;gap:8px;padding:0 9px;cursor:pointer;border-bottom:1px solid transparent;white-space:nowrap;overflow:hidden;color:var(--ink);font-weight:600}
+.lbrow .ix{flex:none;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:#9ab5a7;min-width:20px;text-align:left;direction:ltr}
+.lbrow .nm{flex:1;overflow:hidden;text-overflow:ellipsis}
+.lbrow .qt,.lbrow .pr{flex:none;font-family:'JetBrains Mono',monospace;font-size:.76rem;opacity:.8}
+.lbrow.sel{color:#0c2b22;font-weight:800}
+.lbrow.act-u .nm{text-decoration:underline}
+.lbrow.act-d{outline:1px dotted rgba(12,43,34,.6);outline-offset:-3px}
+.grid-on .lbrow{border-bottom-color:#e6f0ea}
+.grid-on .lbrow .qt,.grid-on .lbrow .pr{border-right:1px solid #e6f0ea;padding-right:8px}
+.vbar{flex:none;background:#e9f2ec;position:relative;border-right:1px solid #cfe4d6;cursor:pointer}
+.vthumb{position:absolute;left:2px;right:2px;border-radius:6px;background:linear-gradient(180deg,var(--amber),#d97706);box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:grab;min-height:22px}
+.vthumb:active{cursor:grabbing}
+.vthumb.broken{background:linear-gradient(180deg,#f43f5e,#be123c)}
+.lbempty{padding:26px 10px;text-align:center;color:#9ab5a7;font-weight:700;font-size:.85rem}
+.statbar{display:flex;gap:8px;flex-wrap:wrap;font-size:.72rem;font-weight:800}
+.statbar b{background:#e6f4ea;color:var(--pine3);padding:3px 10px;border-radius:999px;font-family:'JetBrains Mono',monospace;direction:ltr}
+.statbar b.warn{background:var(--roseSoft);color:var(--rose2)}
+.linkbadges{display:flex;gap:6px;flex-wrap:wrap;font-size:.68rem;font-weight:800}
+.linkbadges span{padding:3px 9px;border-radius:999px;background:var(--limeSoft);color:#3f6212}
+.linkbadges span.off{background:var(--roseSoft);color:var(--rose2)}
+/* controls */
+.controls{background:#fff;border-radius:14px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:11px;max-height:680px;overflow-y:auto}
+.controls::-webkit-scrollbar{width:9px}
+.controls::-webkit-scrollbar-track{background:#eef6f0;border-radius:8px}
+.controls::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--lime2),var(--mint2));border-radius:8px;border:2px solid #eef6f0}
+.cg{border:2px dashed #cfe4d6;border-radius:12px;padding:11px}
+.cg>h4{color:var(--mint2);font-size:.9rem;margin:0 0 9px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.seg button{border:2px solid var(--line);background:#f7fbf8;border-radius:9px;padding:8px 4px;font-family:inherit;font-weight:800;font-size:.8rem;cursor:pointer;color:var(--mut);transition:.18s}
+.seg button:hover{border-color:var(--lime)}
+.seg button.on{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--lime2),var(--mint2))}
+.ctl{margin-bottom:9px}
+.ctl label{display:flex;justify-content:space-between;font-size:.8rem;font-weight:800;color:var(--text);margin-bottom:3px}
+.ctl label output{color:var(--lime2);font-family:'JetBrains Mono',monospace}
+.ctl input[type=range]{width:100%;accent-color:var(--lime2);height:20px;cursor:pointer}
+.ctl select{width:100%;padding:7px 9px;border:2px solid var(--line);border-radius:9px;font-family:inherit;font-weight:700;font-size:.83rem;background:#fff;cursor:pointer}
+.ctl input[type=color]{width:44px;height:32px;border:2px solid var(--line);border-radius:8px;cursor:pointer;padding:2px;background:#fff}
+.swatches{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.sw{width:24px;height:24px;border-radius:7px;border:2px solid rgba(0,0,0,.14);cursor:pointer;transition:.15s}
+.sw:hover{transform:scale(1.18)}
+.check{display:flex;align-items:center;gap:8px;font-size:.83rem;font-weight:800;color:var(--text);cursor:pointer;margin-bottom:6px}
+.check input{width:17px;height:17px;accent-color:var(--lime2);cursor:pointer}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.actions .btn{flex:1;min-width:88px;font-size:.77rem;padding:9px 6px}
+.methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:8px;margin-top:14px}
+.methods button{border:2px solid var(--line);background:#fff;border-radius:10px;padding:9px 8px;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;cursor:pointer;color:var(--pine3);transition:.18s;direction:ltr}
+.methods button:hover{border-color:var(--lime2);background:var(--limeSoft);transform:translateY(-2px)}
+.mout{margin-top:10px;background:#04150f;color:#a3e635;border-radius:10px;padding:11px 14px;font-family:'JetBrains Mono',monospace;font-size:.78rem;direction:ltr;text-align:left;min-height:56px;white-space:pre-wrap;word-break:break-word}
+.mout::-webkit-scrollbar{width:8px}
+.lablog{background:#04150f;color:#7dd3fc;border-radius:10px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:.72rem;direction:ltr;text-align:left;height:100px;overflow-y:auto;margin-top:12px}
+.lablog::-webkit-scrollbar{width:8px}
+.lablog::-webkit-scrollbar-track{background:#04150f}
+.lablog::-webkit-scrollbar-thumb{background:#2f6b52;border-radius:6px;border:2px solid #04150f}
+.lablog div{padding:1px 0;border-bottom:1px dotted rgba(125,211,252,.14)}
+.labcode.flash pre{animation:cf .5s}
+@keyframes cf{0%{box-shadow:inset 0 0 0 3px var(--lime)}100%{box-shadow:inset 0 0 0 0 transparent}}
+/* binding flow */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px;margin:16px 0}
+.node{background:#fff;border:3px solid var(--line);border-radius:14px;padding:14px 12px;text-align:center;transition:.25s;position:relative}
+.node .nn{position:absolute;top:-11px;right:-9px;width:26px;height:26px;border-radius:50%;background:var(--mut);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.76rem;border:2px solid #fff}
+.node .ne{font-size:1.7rem;display:block;margin-bottom:4px}
+.node h4{font-size:.88rem;color:var(--pine3);margin:0 0 3px}
+.node p{font-size:.7rem;color:var(--mut);margin:0;font-family:'JetBrains Mono',monospace;direction:ltr}
+.node.hot{border-color:var(--lime2);background:var(--limeSoft);transform:translateY(-6px);box-shadow:0 10px 24px rgba(101,163,13,.28)}
+.node.hot .nn{background:var(--lime2)}
+.node.dead{border-color:var(--rose2);background:var(--roseSoft);opacity:.8}
+.node.dead .nn{background:var(--rose2)}
+.flowout{background:#04150f;color:#a3e635;border-radius:10px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:.8rem;direction:ltr;text-align:left;min-height:52px}
+/* project */
+.project{background:linear-gradient(135deg,#ecfccb,#ccfbf1);border:3px solid var(--lime2);border-radius:16px;padding:22px;margin:16px 0}
+.project h3{color:var(--lime2);margin-top:0}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin:14px 0}
+.stp{background:#fff;border-radius:12px;padding:14px;border-right:4px solid var(--mint2);font-size:.87rem;font-weight:700}
+.stp b{color:var(--mint2);display:block;margin-bottom:4px}
+.shopmock{background:#eef6f0;border-radius:12px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.smcol{background:#fff;border-radius:10px;padding:12px;border:2px solid #cfe4d6}
+.smcol h5{font-size:.85rem;color:var(--pine3);margin-bottom:8px;font-weight:900}
+.smrow{display:flex;justify-content:space-between;font-size:.78rem;padding:5px 7px;border-radius:6px;font-weight:700}
+.smrow:nth-child(even){background:#f3f8f4}
+.smrow.hit{background:var(--limeSoft);color:#3f6212}
+.smtot{margin-top:9px;padding-top:8px;border-top:2px dashed #cfe4d6;font-weight:900;color:var(--lime2);font-size:.9rem;display:flex;justify-content:space-between}
+/* quiz */
+.quizhead{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.qscore{background:linear-gradient(135deg,var(--lime2),var(--mint2));color:#fff;padding:8px 22px;border-radius:999px;font-weight:900;font-size:1.05rem}
+.qcard{background:#fff;border-radius:13px;padding:18px;margin-bottom:14px;border-right:5px solid var(--mint2);box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.qcard h4{color:var(--ink);font-size:1rem;margin:0 0 12px}
+.qopts{display:grid;gap:8px}
+.qopt{background:#f7fbf8;border:2px solid var(--line);border-radius:10px;padding:10px 15px;cursor:pointer;font-family:inherit;font-size:.92rem;font-weight:700;text-align:right;transition:.18s;color:var(--text)}
+.qopt:hover:not(:disabled){border-color:var(--lime2);background:var(--limeSoft);transform:translateX(-4px)}
+.qopt:disabled{cursor:default;opacity:.85}
+.qopt.ok{background:var(--limeSoft);border-color:var(--lime2);color:#3f6212;opacity:1}
+.qopt.bad{background:var(--roseSoft);border-color:var(--rose2);color:#9f1239;opacity:1}
+.qwhy{display:none;margin-top:10px;background:var(--amberSoft);border-right:4px solid var(--amber2);padding:9px 14px;border-radius:9px;font-size:.86rem}
+.qwhy.show{display:block}
+.qres{display:none;text-align:center;background:linear-gradient(135deg,var(--limeSoft),#d9f99d);border:3px solid var(--lime2);border-radius:14px;padding:22px;margin-top:14px}
+.qres.show{display:block}
+.qres .bn{font-size:2.6rem;font-weight:900;color:#3f6212}
+/* tasks */
+.task{background:#fff;border-radius:13px;padding:18px;margin-bottom:13px;border-right:6px solid;box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.t1{border-color:var(--lime2)}.t2{border-color:var(--mint2)}.t3{border-color:var(--amber2)}.t4{border-color:var(--rose2)}.t5{border-color:var(--sky2)}
+.task h4{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:1rem;margin:0 0 8px}
+.pts{background:var(--mint2);color:#fff;padding:3px 13px;border-radius:999px;font-size:.78rem;font-weight:900}
+.task p{font-size:.92rem;margin-bottom:8px}
+.hint{background:var(--amberSoft);border-right:4px solid var(--amber2);padding:8px 14px;border-radius:9px;font-size:.85rem}
+/* summary */
+.summary{background:linear-gradient(135deg,var(--pine3),var(--lime2));border:none;color:#fff}
+.summary h2{color:#fff;border-color:rgba(255,255,255,.4)}
+.summary h3{color:#fef3c7}
+.sumgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:16px 0}
+.sumitem{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.26);border-radius:12px;padding:14px}
+.sumitem h4{color:#fef3c7;font-size:.95rem;margin:0 0 5px}
+.sumitem code{background:rgba(0,0,0,.32);color:#ecfccb;font-size:.74rem}
+.golden{list-style:none;padding:0}
+.golden li{background:rgba(255,255,255,.13);border-radius:10px;padding:9px 15px;margin-bottom:8px;font-size:.93rem}
+.golden code{background:rgba(0,0,0,.3);color:#fef3c7}
+.next{background:linear-gradient(135deg,var(--sky2),var(--mint2));border:none;color:#fff;text-align:center}
+.next h2{color:#fff;border:none;justify-content:center}
+.next .big{font-size:3.4rem;animation:none}
+.next h3{color:#fff;font-size:1.42rem}
+.next p{color:rgba(255,255,255,.96)}
+.footer{text-align:center;padding:28px;background:linear-gradient(135deg,#ecfccb,#ccfbf1);border-radius:16px}
+.footer .logo{font-size:1.3rem;font-weight:900;color:var(--lime2)}
+.footer p{font-size:.95rem;color:var(--mut);margin:4px 0}
+#toast{position:fixed;bottom:24px;right:50%;transform:translateX(50%) translateY(20px);background:#041c16;color:#fff;padding:11px 26px;border-radius:12px;font-weight:800;font-size:.9rem;z-index:500;opacity:0;pointer-events:none;transition:.3s;box-shadow:0 10px 30px rgba(0,0,0,.5);border:1px solid rgba(163,230,53,.5)}
+#toast.show{opacity:1;transform:translateX(50%) translateY(0)}
+@media(max-width:900px){
+  .lab{grid-template-columns:1fr}
+  .links{display:none}
+  .header h1{font-size:1.6rem}
+  .content{padding:18px}
+  section{padding:20px}
+  .controls{max-height:none}
+  .shopmock{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="shelf" style="width:148px;height:92px;top:14%;left:3%"><i></i><i></i><i></i><b></b></div>
+<div class="shelf" style="width:112px;height:74px;top:62%;left:6%;animation-delay:-4s"><i></i><i></i><b></b></div>
+<div class="shelf" style="width:166px;height:100px;top:26%;right:4%;animation-delay:-7s"><i></i><i></i><i></i><b></b></div>
+<div class="shelf" style="width:120px;height:78px;top:77%;right:7%;animation-delay:-2s"><i></i><i></i><b></b></div>
+
+<nav class="topnav">
+  <div class="brand">
+    <svg viewBox="0 0 64 64"><g class="sun" stroke="#fbbf24" stroke-width="3" stroke-linecap="round"><line x1="25" y1="2" x2="25" y2="5"/><line x1="16" y1="5" x2="18" y2="7"/><line x1="34" y1="5" x2="32" y2="7"/></g><circle cx="25" cy="9" r="4" fill="#fbbf24"/><g fill="#a3e635"><rect x="10" y="18" width="30" height="5" rx="2.5"/><rect x="10" y="28" width="30" height="5" rx="2.5" opacity=".75"/><rect x="10" y="38" width="30" height="5" rx="2.5" opacity=".5"/><rect x="10" y="48" width="30" height="5" rx="2.5" opacity=".3"/></g><rect x="46" y="16" width="7" height="42" rx="3.5" fill="#0b3b2e"/><rect x="46" y="16" width="7" height="18" rx="3.5" fill="#f59e0b"/></svg>
+    Sunshine T Academy
+  </div>
+  <div class="links">
+    <a href="#review">المراجعة</a><a href="#why">ليه Listbox؟</a><a href="#lvl1">الأساسيات</a><a href="#lvl2">التحديد</a><a href="#lvl3">Scrollbar</a><a href="#lvl4">Treeview</a><a href="#lab">🧪 المختبر</a><a href="#project">المشروع</a><a href="#quiz">الاختبار</a>
+  </div>
+  <div id="readbar"></div>
+</nav>
+
+<div class="container">
+  <div class="appbar">
+    <div class="dots"><b class="d-r" onclick="toast('دي نافذة المحاضرة مش هتقفل 😄 كمّل!')"></b><b class="d-y" onclick="toast('تصغير؟ لأ يا بطل، القائمة لسه طويلة 📜')"></b><b class="d-g" onclick="toast('ملء الشاشة؟ اضغط F11 😉')"></b></div>
+    <span class="fname">lists_and_scrollbars.py — Level 2</span>
+    <span class="acad">☀️ Sunshine T Academy</span>
+  </div>
+
+  <header class="header">
+    <span class="lvl">🐍 Python Level 2 · المحاضرة 11</span>
+    <span class="big">📜</span>
+    <h1>Lists &amp; Scrollbars — القوائم وأشرطة التمرير</h1>
+    <div class="sub">اعرض مئات العناصر… والمستخدم يختار منها بسهولة! 🛒</div>
+    <div class="quote">"القائمة مش نص طويل… دي بطاقات مرتبة، كل واحدة تقدر تمسكها لوحدها!"</div>
+    <div class="meta"><span>🐍 Python</span><span>🧩 Tkinter + ttk</span><span>⏱️ 60 دقيقة</span><span>📜 Listbox · Scrollbar · Treeview</span><span>🛒 المشروع: قائمة مشتريات</span></div>
+    <div class="plan"><b>5د مراجعة</b><b>5د تشبيه</b><b>15د شرح</b><b>25د مختبر وتطبيق</b><b>5د أخطاء</b><b>5د تحدي</b></div>
+  </header>
+
+  <div class="content">
+
+  <!-- REVIEW -->
+  <section id="review" class="reveal">
+    <h2>🏆 مراجعة سريعة — شنطتك لحد دلوقتي</h2>
+    <div class="review">
+      <h3>✅ من محاضرات GUI الأولى:</h3>
+      <ul>
+        <li>🪟 <code>Tk()</code> · <code>title()</code> · <code>geometry()</code> · <code>mainloop()</code></li>
+        <li>🧩 <code>Label</code> · <code>Button</code> · <code>command=fn</code> بدون أقواس</li>
+        <li>📐 <code>minsize</code> · <code>resizable</code> · <code>protocol</code> + <code>destroy</code></li>
+      </ul>
+    </div>
+    <div class="review">
+      <h3>✅ من Layouts والإدخال والاختيارات:</h3>
+      <ul>
+        <li>📦 <code>pack</code> · 🔲 <code>grid</code> · 🖼️ <code>Frame</code> = أب مستقل</li>
+        <li>⌨️ <code>Entry.get()</code> · <code>Text</code> · 🔗 <code>StringVar</code> + <code>trace_add</code></li>
+        <li>💬 <code>messagebox</code> · 🔘 <code>Radiobutton</code> · ☑️ <code>Checkbutton</code> · 📋 <code>Combobox</code></li>
+      </ul>
+    </div>
+    <div class="callout c-star">
+      <b>🤔 سؤال تمهيدي:</b>
+      عملنا شاشة طلب بيتزا بالـ <code>Combobox</code>… بس لو عندنا <b>200 منتج</b>؟ القائمة المنسدلة هتبقى طويلة ومزعجة!
+      ولو عايز المستخدم يختار <b>أكتر من منتج مع بعض</b> ويشوفهم قدامه؟ النهارده هنتعلم <code>Listbox</code> + <code>Scrollbar</code> + <code>Treeview</code>! 📜
+    </div>
+  </section>
+
+  <!-- GOALS -->
+  <section class="reveal">
+    <h2>🎯 أهداف المحاضرة</h2>
+    <div class="obj-grid">
+      <div class="obj"><span class="ic">📜</span><h4>Listbox</h4><p>insert · delete · size · get</p></div>
+      <div class="obj"><span class="ic">🎯</span><h4>التحديد</h4><p>curselection · selectmode</p></div>
+      <div class="obj"><span class="ic">↕️</span><h4>Scrollbar</h4><p>الربط في الاتجاهين</p></div>
+      <div class="obj"><span class="ic">🌳</span><h4>Treeview</h4><p>أعمدة وعناوين وقيم</p></div>
+      <div class="obj"><span class="ic">🔃</span><h4>الترتيب</h4><p>فرز وتصحيح الحذف</p></div>
+      <div class="obj"><span class="ic">🛒</span><h4>مشروع عملي</h4><p>قائمة مشتريات تفاعلية</p></div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section id="why" class="reveal">
+    <h2>🤔 ليه Listbox مش Entry ولا Text؟</h2>
+    <p>كل ودجت ليه وظيفة.خلينا نقارن الثلاثة عشان تعرف تختار صح:</p>
+    <table class="tbl">
+      <tr><th>الودجت</th><th>بيخزّن إيه؟</th><th>المستخدم يقدر يعمل إيه؟</th><th>مناسب لـ</th></tr>
+      <tr><td><code>Entry</code></td><td>سطر نص واحد</td><td>يكتب نص حر</td><td>الاسم، السعر، الكمية</td></tr>
+      <tr><td><code>Text</code></td><td>نص طويل متعدد الأسطر</td><td>يكتب ويحرّر بحرية</td><td>النبذة، الملاحظات</td></tr>
+      <tr><td><code>Listbox</code></td><td><b>عناصر منفصلة</b> (صفوف)</td><td><b>يختار</b> صف أو أكتر — مش يكتب</td><td>المنتجات، الملفات، الأسماء ⭐</td></tr>
+      <tr><td><code>ttk.Treeview</code></td><td>صفوف <b>بأعمدة</b></td><td>يختار صف ويرى تفاصيله</td><td>الجداول، الفواتير، التقارير ⭐</td></tr>
+    </table>
+    <div class="callout c-info"><b>💡 القاعدة:</b> لو المستخدم <b>يكتب</b> → Entry/Text. لو المستخدم <b>يختار من موجود</b> → Listbox/Treeview. والفرق بين الأخيرين: Treeview بيعرض <b>أعمدة</b> (اسم + كمية + سعر)، Listbox بيعرض <b>عمود واحد</b>.</div>
+
+    <h3>🧠 التشبيه الذهني — درج البطاقات! 🗄️</h3>
+    <p>تخيل <b>درج مكتبة</b> فيه بطاقات مرتبة تحت بعض:</p>
+    <table class="tbl">
+      <tr><th>في الدرج 🗄️</th><th>في Tkinter 🧩</th><th>الكود</th></tr>
+      <tr><td>الدرج نفسه</td><td>Listbox</td><td><code>tk.Listbox(root)</code></td></tr>
+      <tr><td>بطاقة جديدة في الآخر</td><td>إضافة عنصر</td><td><code>lb.insert(tk.END, "تفاح")</code></td></tr>
+      <tr><td>رقم البطاقة</td><td>الفهرس (Index)</td><td><code>0, 1, 2, ...</code></td></tr>
+      <tr><td>إيدك اللي ماسكة بطاقة</td><td>التحديد</td><td><code>lb.curselection()</code></td></tr>
+      <tr><td>مقبض تسحب الدرج</td><td>Scrollbar</td><td><code>tk.Scrollbar(...)</code></td></tr>
+      <tr><td>بطاقة فيها خانات (اسم/عدد/سعر)</td><td>Treeview</td><td><code>ttk.Treeview(...)</code></td></tr>
+    </table>
+    <div class="callout c-mint"><b>🎮 من التطبيقات الحقيقية:</b> قائمة الأغاني في Spotify، قائمة الملفات فيExplorer، سلة أمازون — كلها <b>قوائم قابلة للتحديد</b> مع شريط تمرير. وإحنا النهارده هنبني واحدة زيهم! 🎯</div>
+  </section>
+
+  <!-- LEVEL 1 -->
+  <section id="lvl1" class="reveal" style="border-right-color:var(--lime2)">
+    <h2 style="color:var(--lime2);border-color:var(--lime2)"><span class="badge b1">المستوى الأول</span> 🟢 Listbox — الأساسيات</h2>
+    <div class="codewrap">
+      <div class="codebar"><span class="fn">listbox_basics.py</span><button class="copybtn" data-copy="c1">📋 نسخ</button></div>
+<pre class="code" id="c1">import tkinter as tk
+
+root = tk.Tk()
+root.title("أول Listbox")
+root.geometry("360x300")
+
+lb = tk.Listbox(root, font=("Arial", 14), height=8)
+lb.pack(fill="both", expand=True, padx=14, pady=14)
+
+# ➕ إضافة عناصر في النهاية
+lb.insert(tk.END, "تفاح 🍎")
+lb.insert(tk.END, "موز 🍌")
+lb.insert(tk.END, "برتقال 🍊")
+
+# ➕ إضافة في مكان محدد (الفهرس 1)
+lb.insert(1, "عنب 🍇")
+
+# 📏 عدد العناصر
+print("عدد العناصر:", lb.size())
+
+# 📖 قراءة عنصر بالفهرس
+print("الأول:", lb.get(0))
+
+# 📖 قراءة كل العناصر
+print("الكل:", lb.get(0, tk.END))
+
+# 🗑️ حذف عنصر بالفهرس
+lb.delete(0)
+
+root.mainloop()</pre>
+    </div>
+    <table class="tbl">
+      <tr><th>الدالة</th><th>بتعمل إيه؟</th><th>ملاحظة مهمة</th></tr>
+      <tr><td><code>insert(index, text)</code></td><td>➕ يضيف عنصر عند الفهرس</td><td><code>tk.END</code> = في النهاية</td></tr>
+      <tr><td><code>delete(index)</code></td><td>🗑️ يحذف عنصر واحد</td><td>مش بيمسح الكل!</td></tr>
+      <tr><td><code>delete(0, tk.END)</code></td><td>🧹 يمسح كل العناصر</td><td>لازم حدّين للإفراغ الكامل</td></tr>
+      <tr><td><code>size()</code></td><td>📏 عدد العناصر</td><td>بيرجع int</td></tr>
+      <tr><td><code>get(index)</code></td><td>📖 نص عنصر واحد</td><td>لازم فهرس — <code>get()</code> لوحدها = خطأ</td></tr>
+      <tr><td><code>get(0, tk.END)</code></td><td>📖 كل العناصر</td><td>بيرجع <b>tuple</b> من النصوص</td></tr>
+      <tr><td><code>see(index)</code></td><td>👁️ يمرّر لحد العنصر</td><td>يخليه ظاهر في الشاشة</td></tr>
+    </table>
+    <div class="callout c-warn"><b>⚠️ فخ مشهور:</b> <code>lb.delete(0)</code> يحذف <b>عنصر واحد</b> بس! لو عايز تفضى القائمة كلها لازم <code>lb.delete(0, tk.END)</code>. و<code>lb.get()</code> بدون فهرس بترمي <code>TypeError</code>.</div>
+  </section>
+
+  <!-- LEVEL 2 -->
+  <section id="lvl2" class="reveal" style="border-right-color:var(--amber2)">
+    <h2 style="color:var(--amber2);border-color:var(--amber2)"><span class="badge b2">المستوى الثاني</span> 🟡 التحديد — curselection و selectmode</h2>
+    <p>القوة الحقيقية للـ Listbox إن المستخدم <b>يختار</b>. وعشان نعرف اختار إيه، نستخدم <code>curselection()</code>.</p>
+    <div class="codewrap">
+      <div class="codebar"><span class="fn">listbox_selection.py</span><button class="copybtn" data-copy="c2">📋 نسخ</button></div>
+<pre class="code" id="c2">import tkinter as tk
+from tkinter import messagebox
+
+root = tk.Tk()
+root.title("التحديد في Listbox")
+root.geometry("380x340")
+
+# selectmode: browse | single | multiple | extended
+lb = tk.Listbox(
+    root,
+    selectmode="extended",
+    activestyle="underline",
+    selectbackground="#a3e635",
+    selectforeground="#0c2b22",
+    font=("Arial", 13),
+    height=8,
+)
+lb.pack(fill="both", expand=True, padx=14, pady=14)
+
+for item in ["تفاح", "موز", "برتقال", "عنب", "مانجو", "فراولة"]:
+    lb.insert(tk.END, item)
+
+
+def show_selected():
+    indices = lb.curselection()        # 👈 tuple من الفهارس
+    if not indices:
+        messagebox.showwarning("تنبيه", "اختار عنصر الأول!")
+        return
+    names = [lb.get(i) for i in indices]
+    result.config(text="اخترت: " + "، ".join(names))
+
+
+def delete_selected():
+    indices = lb.curselection()
+    # ⚠️ نحذف من الآخر للأول عشان الفهارس ما تتلخبطش
+    for i in reversed(indices):
+        lb.delete(i)
+    result.config(text=f"تم حذف {len(indices)} عنصر")
+
+
+btns = tk.Frame(root)
+btns.pack(fill="x", padx=14, pady=(0, 8))
+tk.Button(btns, text="👁️ اعرض المحدد", command=show_selected).pack(side="right", expand=True, fill="x", padx=3)
+tk.Button(btns, text="🗑️ احذف المحدد", command=delete_selected).pack(side="right", expand=True, fill="x", padx=3)
+
+result = tk.Label(root, text="اختار عنصر واضغط الزر", font=("Arial", 11))
+result.pack(pady=(0, 12))
+
+lb.selection_set(0)      # تحديد أول عنصر بالكود
+lb.see(0)                # التأكد إنه ظاهر
+
+root.mainloop()</pre>
+    </div>
+    <h3>🎛️ selectmode — أهم خاصية في المحاضرة</h3>
+    <table class="tbl">
+      <tr><th>القيمة</th><th>المستخدم يقدر يختار</th><th>طريقة التعامل</th><th>مناسب لـ</th></tr>
+      <tr><td><code>"browse"</code></td><td>عنصر <b>واحد</b> (الافتراضي)</td><td>ضغط عادي، والسحب يغيّر الاختيار</td><td>اختار ملف تفتحه</td></tr>
+      <tr><td><code>"single"</code></td><td>عنصر <b>واحد</b></td><td>ضغط عادي فقط</td><td>اختيار بسيط</td></tr>
+      <tr><td><code>"multiple"</code></td><td><b>أي عدد</b></td><td>كل ضغطة تعكس العنصر (toggle)</td><td>اختار هواياتك ☑️</td></tr>
+      <tr><td><code>"extended"</code></td><td><b>أي عدد</b></td><td>Ctrl+ضغط للإضافة، Shift+ضغط لنطاق</td><td>سلة مشتريات 🛒</td></tr>
+    </table>
+    <table class="tbl">
+      <tr><th>الدالة</th><th>بتعمل إيه؟</th></tr>
+      <tr><td><code>curselection()</code></td><td>🎯 tuple بالفهارس المحددة — مثال <code>(0, 2, 3)</code></td></tr>
+      <tr><td><code>selection_set(i)</code></td><td>✅ يحدد العنصر i بالكود</td></tr>
+      <tr><td><code>selection_clear(0, tk.END)</code></td><td>❌ يشيل كل التحديد</td></tr>
+      <tr><td><code>selection_includes(i)</code></td><td>❓ هل العنصر i محدد؟ True/False</td></tr>
+      <tr><td><code>activate(i)</code></td><td>📍 يخلي العنصر i هو "النشط"</td></tr>
+    </table>
+    <div class="callout c-warn"><b>⚠️ أخطر فخ في الحذف المتعدد:</b> لو حذفت من الأول للآخر، الفهارس <b>بتتغير</b> بعد كل حذف وهتحذف عناصر غلط! الحل دايماً: <code>for i in reversed(indices): lb.delete(i)</code> — من الآخر للأول. 🔁</div>
+    <div class="callout c-tip"><b>💡 Remember:</b> <code>curselection()</code> بترجع <b>فهارس</b> مش نصوص! عشان تجيب النص لازم <code>lb.get(i)</code>. ودايماً افحص <code>if not indices:</code> قبل ما تستخدمها.</div>
+  </section>
+
+  <!-- LEVEL 3 -->
+  <section id="lvl3" class="reveal" style="border-right-color:var(--rose2)">
+    <h2 style="color:var(--rose2);border-color:var(--rose2)"><span class="badge b3">المستوى الثالث</span> 🔴 Scrollbar — الربط في الاتجاهين ↕️</h2>
+    <p>لما العناصر تزيد عن الـ <code>height</code، لازم شريط تمرير. والسر إن الربط <b>في اتجاهين</b> — مش سطر واحد!</p>
+    <div class="codewrap">
+      <div class="codebar"><span class="fn">scrollbar_binding.py</span><button class="copybtn" data-copy="c3">📋 نسخ</button></div>
+<pre class="code" id="c3">import tkinter as tk
+
+root = tk.Tk()
+root.title("Listbox + Scrollbar")
+root.geometry("380x320")
+
+# 1️⃣ حاوية Frame تجمع القائمة والشريط جنب بعض
+frame = tk.Frame(root)
+frame.pack(fill="both", expand=True, padx=14, pady=14)
+
+# 2️⃣ الشريط على اليمين ويملأ الطول
+bar = tk.Scrollbar(frame, orient="vertical", width=16)
+bar.pack(side="right", fill="y")
+
+# 3️⃣ القائمة: الاتجاه الأول (القائمة تُبلغ الشريط)
+lb = tk.Listbox(
+    frame,
+    height=8,
+    font=("Arial", 13),
+    yscrollcommand=bar.set,     # 👈 lb ➜ bar
+)
+lb.pack(side="left", fill="both", expand=True)
+
+# 4️⃣ الاتجاه الثاني (الشريط يأمر القائمة)
+bar.config(command=lb.yview)    # 👈 bar ➜ lb
+
+for i in range(1, 41):
+    lb.insert(tk.END, f"منتج رقم {i}")
+
+root.mainloop()</pre>
+    </div>
+    <h3>🔗 لماذا اتجاهان؟</h3>
+    <table class="tbl">
+      <tr><th>السطر</th><th>الاتجاه</th><th>معناه</th><th>لو نسيته؟</th></tr>
+      <tr><td><code>yscrollcommand=bar.set</code></td><td>Listbox ➜ Scrollbar</td><td>"أنا اتمرّرت… حرّك المؤشر"</td><td>التمرير يشتغل بس <b>المؤشر ما يتحركش</b> ❌</td></tr>
+      <tr><td><code>bar.config(command=lb.yview)</code></td><td>Scrollbar ➜ Listbox</td><td>"المستخدم سحبني… مرّر القائمة"</td><td>سحب المؤشر <b>ما يمرّرش</b> القائمة ❌</td></tr>
+    </table>
+    <div class="callout c-star"><b>🌟 جرّبها بنفسك في المختبر تحت:</b> فيه مفتاحين لكل اتجاه — اقفل واحد وشوف بالظبط إيه اللي بيبوظ! دي أحسن طريقة تفهم الربط. 🔬</div>
+
+    <h3>🔁 رحلة التمرير — شوفها خطوة بخطوة</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="btn btn-l" id="flowRun">▶ شغّل رحلة التمرير</button>
+      <button class="btn btn-ghost" id="flowReset">♻️ إعادة</button>
+    </div>
+    <div class="flow" id="flowNodes">
+      <div class="node"><span class="nn">1</span><span class="ne">🖱️</span><h4>المستخدم يسحب المؤشر</h4><p>drag thumb</p></div>
+      <div class="node"><span class="nn">2</span><span class="ne">📤</span><h4>الشريط ينادي الأمر</h4><p>command=lb.yview</p></div>
+      <div class="node"><span class="nn">3</span><span class="ne">📜</span><h4>القائمة تتمرّر</h4><p>lb.yview_moveto(...)</p></div>
+      <div class="node"><span class="nn">4</span><span class="ne">🔙</span><h4>القائمة تبلّغ الشريط</h4><p>yscrollcommand=bar.set</p></div>
+    </div>
+    <div class="flowout" id="flowOut">اضغط "شغّل رحلة التمرير" عشان تشوف الحلقة الكاملة...</div>
+    <div class="callout c-info"><b>💡 نفس الكلام للأفقي:</b> لو عندك نص طويل جداً بالعرض، تستخدم <code>orient="horizontal"</code> + <code>xscrollcommand</code> + <code>command=lb.xview</code>. نفس الفكرة بالظبط بس على المحور التاني. ↔️</div>
+  </section>
+
+  <!-- LEVEL 4 -->
+  <section id="lvl4" class="reveal" style="border-right-color:var(--sky2)">
+    <h2 style="color:var(--sky2);border-color:var(--sky2)"><span class="badge b4">المستوى الرابع</span> 🟣 Treeview — الجدول بأعمدة 🌳</h2>
+    <p>الـ <code>Listbox</code> عمود واحد. لو عايز <b>اسم + كمية + سعر</b> في صفوف مرتبة → <code>ttk.Treeview</code>!</p>
+    <div class="codewrap">
+      <div class="codebar"><span class="fn">treeview_demo.py</span><button class="copybtn" data-copy="c4">📋 نسخ</button></div>
+<pre class="code" id="c4">import tkinter as tk
+from tkinter import ttk
+
+root = tk.Tk()
+root.title("Treeview — جدول المنتجات")
+root.geometry("520x340")
+
+frame = tk.Frame(root)
+frame.pack(fill="both", expand=True, padx=14, pady=14)
+
+bar = tk.Scrollbar(frame, orient="vertical")
+bar.pack(side="right", fill="y")
+
+cols = ("item", "qty", "price")
+tv = ttk.Treeview(
+    frame,
+    columns=cols,
+    show="headings",        # 👈 يخفي عمود الشجرة ويظهر العناوين فقط
+    height=8,
+    selectmode="extended",
+    yscrollcommand=bar.set,
+)
+
+# عناوين الأعمدة
+tv.heading("item", text="المنتج")
+tv.heading("qty", text="الكمية")
+tv.heading("price", text="السعر")
+
+# عرض ومحاذاة كل عمود
+tv.column("item", width=200, anchor="w")
+tv.column("qty", width=80, anchor="center")
+tv.column("price", width=100, anchor="center")
+
+tv.pack(side="left", fill="both", expand=True)
+bar.config(command=tv.yview)
+
+# ➕ إدراج صف بقيم متعددة
+rows = [
+    ("تفاح 🍎", 6, 12),
+    ("موز 🍌", 4, 8),
+    ("برتقال 🍊", 3, 10),
+    ("عنب 🍇", 2, 25),
+]
+for row in rows:
+    tv.insert("", tk.END, values=row)
+
+
+def show_row():
+    for iid in tv.selection():
+        values = tv.item(iid, "values")
+        print("الصف المحدد:", values)
+
+
+def remove_row():
+    for iid in tv.selection():
+        tv.delete(iid)
+
+
+btns = tk.Frame(root)
+btns.pack(fill="x", padx=14, pady=(0, 12))
+tk.Button(btns, text="👁️ اعرض الصف", command=show_row).pack(side="right", expand=True, fill="x", padx=3)
+tk.Button(btns, text="🗑️ احذف الصف", command=remove_row).pack(side="right", expand=True, fill="x", padx=3)
+
+root.mainloop()</pre>
+    </div>
+    <table class="tbl">
+      <tr><th>العنصر</th><th>الوظيفة</th></tr>
+      <tr><td><code>columns=("a","b")</code></td><td>معرّفات الأعمدة (أسماء داخلية)</td></tr>
+      <tr><td><code>show="headings"</code></td><td>يخفي عمود الشجرة #0 ويظهر صف العناوين فقط</td></tr>
+      <tr><td><code>tv.heading(id, text=...)</code></td><td>النص الظاهر في رأس العمود</td></tr>
+      <tr><td><code>tv.column(id, width, anchor)</code></td><td>عرض العمود والمحاذاة (w/e/center)</td></tr>
+      <tr><td><code>tv.insert("", tk.END, values=row)</code></td><td>إدراج صف — <b>values</b> مش نص واحد!</td></tr>
+      <tr><td><code>tv.selection()</code></td><td>tuple بمعرّفات الصفوف (iids) — مش فهارس!</td></tr>
+      <tr><td><code>tv.item(iid, "values")</code></td><td>قيم الصف كـ tuple</td></tr>
+      <tr><td><code>tv.get_children()</code></td><td>كل معرّفات الصفوف</td></tr>
+      <tr><td><code>tv.delete(iid)</code></td><td>حذف صف بالمعرّف</td></tr>
+    </table>
+    <div class="callout c-warn"><b>⚠️ فرق جوهري:</b> في <code>Listbox</code> التحديد بيرجع <b>أرقام فهارس</b>، وفي <code>Treeview</code> بيرجع <b>معرّفات نصية (iids)</b>. عشان كده في Treeview الحذف المتعدد آمن مباشرة — مفيش مشكلة تغيّر الفهارس! ✅</div>
+    <div class="callout c-tip"><b>💡 فرز الأعمدة:</b> تخلي رأس العمود قابل للضغط بـ <code>tv.heading("price", text="السعر", command=sort_by_price)</code> — وفي الدالة تعيد ترتيب الصفوف. جرّبها في المختبر بالضغط على العناوين! 🖱️</div>
+  </section>
+
+  <!-- ===== LAB ===== -->
+  <section id="lab" class="reveal" style="border-right-color:var(--lime2)">
+    <h2 style="color:var(--lime2);border-color:var(--lime2)">🧪 مختبر القوائم — List Lab</h2>
+    <p>دي <b>محاكاة تعليمية</b> جوّه المتصفح. غيّر أي أداة، اضغط على الصفوف، اسحب شريط التمرير — والكود بيتحدّث <b>في نفس اللحظة</b>! والأهم: جرّب تقفل مفاتيح الربط وشوف إيه اللي بيبوظ. 🔬</p>
+    <div class="lab">
+      <div>
+        <div class="stage">
+          <div class="tkwin">
+            <div class="tkbar">
+              <span>📜</span><span class="tt" id="winTitle">List Lab — Listbox</span>
+              <button class="mb">—</button><button class="mb">▢</button><button class="mb x">✕</button>
+            </div>
+            <div class="tkbody">
+              <div class="addrow">
+                <input id="addName" type="text" placeholder="اسم منتج جديد..." maxlength="26">
+                <input id="addQty" type="number" value="1" min="1" max="99" title="الكمية">
+                <button id="addBtn">➕ أضف</button>
+              </div>
+              <div id="tvHead" class="tvhead" style="display:none">
+                <span data-col="name">المنتج <b class="ar" id="arName"></b></span>
+                <span data-col="qty">الكمية <b class="ar" id="arQty"></b></span>
+                <span data-col="price">السعر <b class="ar" id="arPrice"></b></span>
+              </div>
+              <div class="listwrap" id="listWrap">
+                <div class="lbscroll" id="lbScroll"></div>
+                <div class="vbar" id="vBar"><div class="vthumb" id="vThumb"></div></div>
+              </div>
+              <div class="statbar">
+                <b>size() = <span id="stSize">0</span></b>
+                <b>curselection() = <span id="stSel">()</span></b>
+                <b id="stMode">browse</b>
+              </div>
+              <div class="linkbadges">
+                <span id="bgA">✅ yscrollcommand (lb ➜ bar)</span>
+                <span id="bgB">✅ command (bar ➜ lb)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top:16px">🔬 ملعب الدوال — اضغط وشوف النتيجة</h3>
+        <div class="methods" id="methods">
+          <button data-m="size">size()</button>
+          <button data-m="getall">get(0, END)</button>
+          <button data-m="cur">curselection()</button>
+          <button data-m="insert">insert(END, ...)</button>
+          <button data-m="del">delete(selected)</button>
+          <button data-m="clear">delete(0, END)</button>
+          <button data-m="sel0">selection_set(0)</button>
+          <button data-m="selclear">selection_clear(0,END)</button>
+          <button data-m="see">see(last)</button>
+          <button data-m="reverse">reversed delete 🔁</button>
+        </div>
+        <div class="mout" id="mout"># اضغط أي دالة فوق لتشوف الكود والنتيجة الحقيقية…</div>
+        <div class="lablog" id="labLog"><div>🟢 List Lab ready — جرّب مفاتيح الربط!</div></div>
+      </div>
+
+      <div class="controls">
+        <div class="cg">
+          <h4>🧩 نوع الودجت</h4>
+          <div class="seg" id="segWidget">
+            <button data-w="listbox" class="on">📜 Listbox</button>
+            <button data-w="treeview">🌳 Treeview</button>
+          </div>
+        </div>
+
+        <div class="cg">
+          <h4>🎯 التحديد والترتيب</h4>
+          <div class="ctl"><label>selectmode</label>
+            <select id="cMode">
+              <option value="browse">browse — واحد (افتراضي)</option>
+              <option value="single">single — واحد فقط</option>
+              <option value="multiple">multiple — أي عدد (toggle)</option>
+              <option value="extended">extended — Ctrl / Shift</option>
+            </select>
+          </div>
+          <div class="ctl"><label>activestyle</label>
+            <select id="cActive">
+              <option value="underline">underline — خط تحت</option>
+              <option value="dotbox">dotbox — إطار منقّط</option>
+              <option value="none">none — بدون</option>
+            </select>
+          </div>
+          <div class="ctl"><label>ترتيب العناصر (sort)</label>
+            <select id="cSort">
+              <option value="none">none — بدون ترتيب</option>
+              <option value="asc">تصاعدي ↑</option>
+              <option value="desc">تنازلي ↓</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cg">
+          <h4>📐 الحجم والمظهر</h4>
+          <div class="ctl"><label>height — عدد الصفوف الظاهرة <output id="oHeight">8</output></label><input type="range" id="cHeight" min="3" max="12" value="8"></div>
+          <div class="ctl"><label>font size <output id="oFont">14</output></label><input type="range" id="cFont" min="11" max="22" value="14"></div>
+          <div class="ctl"><label>selectbackground — لون التحديد</label>
+            <div class="swatches">
+              <input type="color" id="cSel" value="#a3e635">
+              <button class="sw" style="background:#a3e635" data-c="#a3e635"></button>
+              <button class="sw" style="background:#2dd4bf" data-c="#2dd4bf"></button>
+              <button class="sw" style="background:#f59e0b" data-c="#f59e0b"></button>
+              <button class="sw" style="background:#38bdf8" data-c="#38bdf8"></button>
+              <button class="sw" style="background:#f43f5e" data-c="#f43f5e"></button>
+            </div>
+          </div>
+          <label class="check"><input type="checkbox" id="cIndex" checked> 🔢 إظهار أرقام الصفوف (Index)</label>
+          <label class="check"><input type="checkbox" id="cGrid" checked> 🔲 إظهار خطوط الشبكة (Treeview)</label>
+        </div>
+
+        <div class="cg">
+          <h4>↕️ شريط التمرير والربط</h4>
+          <div class="ctl"><label>scrollbar width <output id="oBar">16</output></label><input type="range" id="cBar" min="8" max="28" value="16"></div>
+          <label class="check"><input type="checkbox" id="cLinkA" checked> ✅ yscrollcommand=bar.set<br><small style="font-weight:600;color:var(--mut)">(القائمة تبلّغ الشريط)</small></label>
+          <label class="check"><input type="checkbox" id="cLinkB" checked> ✅ bar.config(command=lb.yview)<br><small style="font-weight:600;color:var(--mut)">(الشريط يأمر القائمة)</small></label>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-r" id="bDel">🗑️ احذف المحدد</button>
+          <button class="btn btn-a" id="bShuffle">🔀 خلط</button>
+          <button class="btn btn-s" id="bSeed">🎲 بيانات جديدة</button>
+          <button class="btn btn-ghost" id="bReset">♻️ إعادة ضبط</button>
+          <button class="btn btn-l" id="bCopy">📋 نسخ الكود</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="codewrap labcode" id="labCodeWrap">
+      <div class="codebar"><span class="fn" id="labFile">list_lab.py — بيتولد لايف من أدواتك! ⚡</span><button class="copybtn" id="bCopy2">📋 نسخ الكود</button></div>
+      <pre class="code" id="labCode"></pre>
+    </div>
+    <div class="callout c-tip"><b>▶ شغّله على جهازك:</b> انسخ الكود ← احفظه في <code>list_lab.py</code> ← في التيرمنال <code>python list_lab.py</code>. هتشوف نفس القائمة والتمرير بالظبط! 🚀</div>
+    <div class="callout c-warn"><b>📌 أمانة تقنية:</b> اللي فوق <b>محاكاة بالـ HTML</b>. Tkinter نفسه <b>مش بيشتغل جوّه المتصفح ولا Colab</b> — لازم Python على جهازك. الكود اللي بيتولد هو الكود الحقيقي. ✅</div>
+  </section>
+
+  <!-- ERRORS -->
+  <section class="reveal">
+    <h2>🐛 ركن الأخطاء الشائعة وحلولها</h2>
+    <table class="tbl">
+      <tr><th>الغلطة ❌</th><th>النتيجة 💥</th><th>التصحيح ✅</th></tr>
+      <tr><td><code>lb.get()</code> بدون فهرس</td><td>TypeError</td><td><code>lb.get(0)</code> أو <code>lb.get(0, tk.END)</code></td></tr>
+      <tr><td>اعتبار <code>curselection()</code> نصوص</td><td>تحصل على أرقام مش أسماء</td><td><code>lb.get(i) for i in lb.curselection()</code></td></tr>
+      <tr><td>حذف متعدد من الأول للآخر</td><td>يحذف عناصر غلط!</td><td><code>for i in reversed(sel)</code></td></tr>
+      <tr><td>نسيان <code>yscrollcommand</code></td><td>المؤشر ما يتحركش</td><td><code>yscrollcommand=bar.set</code></td></tr>
+      <tr><td>نسيان <code>command</code></td><td>سحب المؤشر ما يمرّرش</td><td><code>bar.config(command=lb.yview)</code></td></tr>
+      <tr><td><code>lb.delete(0)</code> لتفريغ القائمة</td><td>يحذف عنصر واحد بس</td><td><code>lb.delete(0, tk.END)</code></td></tr>
+      <tr><td><code>selectmode="browse"</code> وتحاول تحدد كتير</td><td>ما ينفعش</td><td><code>multiple</code> أو <code>extended</code></td></tr>
+      <tr><td><code>tk.Treeview(...)</code></td><td>AttributeError</td><td><code>ttk.Treeview</code> من <code>tkinter.ttk</code></td></tr>
+      <tr><td><code>tv.insert("", END, "نص")</code></td><td>القيم مش ظاهرة صح</td><td><code>values=("اسم", 2, 10)</code></td></tr>
+      <tr><td>اعتبار <code>tv.selection()</code> أرقام</td><td>TypeError عند الفهرسة</td><td>دي <b>iids</b> — استخدم <code>tv.item(iid,"values")</code></td></tr>
+      <tr><td>نسيان <code>fill="both", expand=True</code></td><td>القائمة صغيرة في النص</td><td>حطهم على الـ Listbox والـ Frame</td></tr>
+      <tr><td>الحذف أثناء التكرار على <code>get_children()</code></td><td>سلوك غير متوقع</td><td><code>for iid in list(tv.get_children())</code></td></tr>
+      <tr><td><code>see()</code> قبل بناء الواجهة</td><td>ما يمرّرش</td><td>بعد <code>update_idletasks()</code> أو بعد ملء القائمة</td></tr>
+    </table>
+  </section>
+
+  <!-- PROJECT -->
+  <section id="project" class="reveal">
+    <h2>🎨 مشروع المحاضرة — قائمة مشتريات تفاعلية 🛒</h2>
+    <div class="project">
+      <h3>📜 Sunshine Market — كتالوج + سلة</h3>
+      <p>هنستخدم <b>الودجتين</b> مع بعض: <code>Treeview</code> للكتالوج (اسم + سعر + مخزون) و<code>Listbox</code> للسلة، وكل واحد معاه <code>Scrollbar</code> مربوط في الاتجاهين. وفيه إضافة وحذف وتفريغ وحساب الإجمالي!</p>
+      <div class="steps">
+        <div class="stp"><b>1️⃣ افتح المحرر</b>اعمل ملف <code>shopping_list.py</code></div>
+        <div class="stp"><b>2️⃣ انسخ الكود</b>من الزرار تحت</div>
+        <div class="stp"><b>3️⃣ شغّل</b><code>python shopping_list.py</code></div>
+        <div class="stp"><b>4️⃣ جرّب</b>حدد أكتر من صف بـ Ctrl واحذفهم!</div>
+      </div>
+      <h3>👀 الشكل المتوقع</h3>
+      <div class="shopmock">
+        <div class="smcol">
+          <h5>🌳 الكتالوج (Treeview)</h5>
+          <div class="smrow"><span>تفاح 🍎</span><span>12 ج</span></div>
+          <div class="smrow hit"><span>موز 🍌</span><span>8 ج</span></div>
+          <div class="smrow"><span>برتقال 🍊</span><span>10 ج</span></div>
+          <div class="smrow"><span>عنب 🍇</span><span>25 ج</span></div>
+          <div class="smrow"><span>مانجو 🥭</span><span>30 ج</span></div>
+        </div>
+        <div class="smcol">
+          <h5>📜 السلة (Listbox)</h5>
+          <div class="smrow"><span>موز 🍌 × 3</span><span>24 ج</span></div>
+          <div class="smrow"><span>عنب 🍇 × 1</span><span>25 ج</span></div>
+          <div class="smtot"><span>الإجمالي</span><span>49 جنيه</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="codewrap">
+      <div class="codebar"><span class="fn">shopping_list.py — المشروع الكامل 🚀</span><button class="copybtn" data-copy="cProject">📋 نسخ</button></div>
+<pre class="code" id="cProject"># ═══════════════════════════════════════
+# 🛒 قائمة مشتريات تفاعلية
+# Sunshine T Academy — Lists &amp; Scrollbars
+# ═══════════════════════════════════════
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+BG = "#f3f8f4"
+CARD = "#ffffff"
+INK = "#0c2b22"
+LIME = "#65a30d"
+MINT = "#0d9488"
+ROSE = "#be123c"
+
+CATALOG = [
+    ("تفاح 🍎", 12, 40),
+    ("موز 🍌", 8, 60),
+    ("برتقال 🍊", 10, 35),
+    ("عنب 🍇", 25, 20),
+    ("مانجو 🥭", 30, 18),
+    ("فراولة 🍓", 22, 25),
+    ("بطيخ 🍉", 45, 10),
+    ("أناناس 🍍", 38, 12),
+    ("كيوي 🥝", 28, 22),
+    ("ليمون 🍋", 9, 50),
+    ("خوخ 🍑", 26, 16),
+    ("كمثرى 🍐", 20, 24),
+]
+
+cart = []          # قائمة قواميس: {"name","qty","price"}
+
+root = tk.Tk()
+root.title("🛒 Sunshine Market — Sunshine T Academy")
+root.geometry("860x520")
+root.minsize(760, 460)
+root.configure(bg=BG)
+
+
+# ═══ دوال السلة ═══
+def refresh_cart():
+    """إعادة بناء Listbox السلة من قائمة cart"""
+    cart_box.delete(0, tk.END)
+    for it in cart:
+        line = f"{it['name']}  ×{it['qty']}  =  {it['qty'] * it['price']} ج"
+        cart_box.insert(tk.END, line)
+
+    total = sum(it["qty"] * it["price"] for it in cart)
+    count_label.configure(text=f"🧾 عدد الأصناف: {cart_box.size()}")
+    total_label.configure(text=f"💰 الإجمالي: {total} جنيه")
+
+
+def add_to_cart():
+    selected = tv.selection()
+    if not selected:
+        messagebox.showwarning("تنبيه", "⚠️ حدّد منتج من الكتالوج الأول!")
+        return
+
+    try:
+        qty = int(qty_entry.get())
+        if qty &lt;= 0:
+            raise ValueError
+    except ValueError:
+        messagebox.showerror("خطأ", "❌ الكمية لازم رقم صحيح موجب!")
+        return
+
+    added = 0
+    for iid in selected:
+        name, price, stock = tv.item(iid, "values")
+        price = int(price)
+        stock = int(stock)
+
+        already = sum(i["qty"] for i in cart if i["name"] == name)
+        if already + qty &gt; stock:
+            messagebox.showerror(
+                "المخزون",
+                f"❌ {name}: المتاح {stock} فقط (في السلة {already})",
+            )
+            continue
+
+        found = False
+        for it in cart:
+            if it["name"] == name:
+                it["qty"] += qty
+                found = True
+                break
+        if not found:
+            cart.append({"name": name, "qty": qty, "price": price})
+        added += 1
+
+    if added:
+        refresh_cart()
+        cart_box.see(tk.END)          # مرّر لآخر عنصر أُضيف
+        status.configure(text=f"✅ أُضيف {added} صنف للسلة", fg=LIME)
+
+
+def remove_selected():
+    indices = cart_box.curselection()
+    if not indices:
+        messagebox.showwarning("تنبيه", "⚠️ حدّد عنصر من السلة!")
+        return
+    # 🔁 من الآخر للأول حتى لا تتغير الفهارس
+    for i in reversed(indices):
+        cart.pop(i)
+    refresh_cart()
+    status.configure(text=f"🗑️ حُذف {len(indices)} صنف", fg=ROSE)
+
+
+def clear_cart():
+    if not cart:
+        messagebox.showinfo("السلة", "🛒 السلة فارغة أصلاً!")
+        return
+    if messagebox.askyesno("تأكيد", "متأكد إنك عايز تفضّي السلة؟"):
+        cart.clear()
+        cart_box.delete(0, tk.END)     # الطريقة الصحيحة للإفراغ
+        refresh_cart()
+        status.configure(text="🧹 السلة اتفضّت", fg=MINT)
+
+
+def checkout():
+    if not cart:
+        messagebox.showwarning("تنبيه", "🛒 السلة فارغة!")
+        return
+    total = sum(i["qty"] * i["price"] for i in cart)
+    lines = [f"• {i['name']} ×{i['qty']} = {i['qty']*i['price']} ج" for i in cart]
+    receipt = "\n".join(lines) + f"\n\n💰 الإجمالي: {total} جنيه"
+    if messagebox.askyesno("إتمام الشراء", receipt + "\n\nتأكيد؟"):
+        messagebox.showinfo("تم ✅", f"تم الشراء بمبلغ {total} جنيه")
+        cart.clear()
+        refresh_cart()
+        status.configure(text="🎉 تم إتمام الشراء!", fg=LIME)
+
+
+def sort_catalog(col):
+    """فرز الكتالوج بالضغط على رأس العمود"""
+    global sort_state
+    idx = {"name": 0, "price": 1, "stock": 2}[col]
+    reverse = sort_state.get(col, False)
+    rows = sorted(CATALOG, key=lambda r: r[idx], reverse=reverse)
+    sort_state[col] = not reverse
+    for iid in tv.get_children():
+        tv.delete(iid)
+    for row in rows:
+        tv.insert("", tk.END, values=row)
+
+
+sort_state = {}
+
+# ═══ الهيدر ═══
+head = tk.Frame(root, bg=MINT, height=58)
+head.pack(fill="x")
+head.pack_propagate(False)
+tk.Label(head, text="☀️ Sunshine Market 🛒", bg=MINT, fg="white",
+         font=("Arial", 18, "bold")).pack(side="right", padx=18)
+tk.Label(head, text="Lists &amp; Scrollbars — المحاضرة 11", bg=MINT, fg="#ccfbf1",
+         font=("Arial", 10)).pack(side="left", padx=18)
+
+body = tk.Frame(root, bg=BG)
+body.pack(fill="both", expand=True, padx=14, pady=14)
+body.grid_columnconfigure(0, weight=3)
+body.grid_columnconfigure(1, weight=2)
+body.grid_rowconfigure(0, weight=1)
+
+# ═══ العمود الأيمن: الكتالوج (Treeview) ═══
+left = tk.LabelFrame(body, text=" 🌳 الكتالوج ", bg=BG, fg=MINT,
+                     font=("Arial", 11, "bold"))
+left.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
+
+cat_frame = tk.Frame(left, bg=BG)
+cat_frame.pack(fill="both", expand=True, padx=8, pady=8)
+
+cat_bar = tk.Scrollbar(cat_frame, orient="vertical", width=16)
+cat_bar.pack(side="right", fill="y")
+
+tv = ttk.Treeview(cat_frame, columns=("name", "price", "stock"),
+                  show="headings", height=12, selectmode="extended",
+                  yscrollcommand=cat_bar.set)
+tv.heading("name", text="المنتج", command=lambda: sort_catalog("name"))
+tv.heading("price", text="السعر", command=lambda: sort_catalog("price"))
+tv.heading("stock", text="المخزون", command=lambda: sort_catalog("stock"))
+tv.column("name", width=180, anchor="w")
+tv.column("price", width=80, anchor="center")
+tv.column("stock", width=80, anchor="center")
+tv.pack(side="left", fill="both", expand=True)
+cat_bar.config(command=tv.yview)
+
+for row in CATALOG:
+    tv.insert("", tk.END, values=row)
+
+qty_row = tk.Frame(left, bg=BG)
+qty_row.pack(fill="x", padx=8, pady=(0, 8))
+tk.Label(qty_row, text="الكمية:", bg=BG, fg=INK,
+         font=("Arial", 11, "bold")).pack(side="right", padx=(0, 6))
+qty_entry = tk.Entry(qty_row, width=6, justify="center", font=("Arial", 12))
+qty_entry.insert(0, "1")
+qty_entry.pack(side="right")
+tk.Button(qty_row, text="➕ أضف للسلة", command=add_to_cart,
+          bg=LIME, fg="white", relief="flat",
+          font=("Arial", 11, "bold")).pack(side="right", padx=8, ipady=4, ipadx=8)
+
+# ═══ العمود الأيسر: السلة (Listbox) ═══
+right = tk.LabelFrame(body, text=" 📜 سلة المشتريات ", bg=BG, fg=LIME,
+                      font=("Arial", 11, "bold"))
+right.grid(row=0, column=1, sticky="nsew")
+
+cart_frame = tk.Frame(right, bg=BG)
+cart_frame.pack(fill="both", expand=True, padx=8, pady=8)
+
+cart_bar = tk.Scrollbar(cart_frame, orient="vertical", width=16)
+cart_bar.pack(side="right", fill="y")
+
+cart_box = tk.Listbox(cart_frame, height=12, font=("Arial", 12),
+                      selectmode="extended", activestyle="underline",
+                      selectbackground="#a3e635", selectforeground=INK,
+                      yscrollcommand=cart_bar.set)
+cart_box.pack(side="left", fill="both", expand=True)
+cart_bar.config(command=cart_box.yview)
+
+count_label = tk.Label(right, text="🧾 عدد الأصناف: 0", bg=BG, fg=INK,
+                       font=("Arial", 10, "bold"))
+count_label.pack(anchor="w", padx=10)
+total_label = tk.Label(right, text="💰 الإجمالي: 0 جنيه", bg=BG, fg=LIME,
+                       font=("Arial", 14, "bold"))
+total_label.pack(anchor="w", padx=10, pady=(2, 8))
+
+cart_btns = tk.Frame(right, bg=BG)
+cart_btns.pack(fill="x", padx=8, pady=(0, 10))
+tk.Button(cart_btns, text="🗑️ احذف المحدد", command=remove_selected,
+          bg=ROSE, fg="white", relief="flat").pack(fill="x", pady=2, ipady=4)
+tk.Button(cart_btns, text="🧹 تفريغ السلة", command=clear_cart,
+          bg="#e6f4ea", fg=INK, relief="flat").pack(fill="x", pady=2, ipady=4)
+tk.Button(cart_btns, text="💳 إتمام الشراء", command=checkout,
+          bg=MINT, fg="white", relief="flat",
+          font=("Arial", 11, "bold")).pack(fill="x", pady=2, ipady=5)
+
+status = tk.Label(root, text="جاهز… حدّد منتج واضف للسلة 🛒", bg=BG, fg=INK,
+                  font=("Arial", 10, "bold"))
+status.pack(pady=(0, 10))
+
+root.bind("&lt;Return&gt;", lambda e: add_to_cart())
+root.bind("&lt;Delete&gt;", lambda e: remove_selected())
+
+refresh_cart()
+root.mainloop()</pre>
+    </div>
+    <div class="callout c-info"><b>🔍 تتبّع الربط:</b> الكتالوج <code>Treeview</code> مربوط بـ <code>cat_bar</code> في الاتجاهين، والسلة <code>Listbox</code> مربوطة بـ <code>cart_bar</code> في الاتجاهين. كل قائمة ليها شريط مستقل — <b>4 سطور ربط</b> altogether. والحذف بيستخدم <code>reversed()</code> عشان الفهارس ما تتلخبطش! ✅</div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="reveal">
+    <h2>🧠 اختبر معلوماتك — 10 أسئلة</h2>
+    <div class="quizhead">
+      <p style="margin:0">اختار إجابة واحدة لكل سؤال — التصحيح والتفسير فوراً! ✅❌</p>
+      <span class="qscore" id="qScore">النتيجة: 0 / 10</span>
+    </div>
+    <div id="quizBox"></div>
+    <div class="qres" id="qRes">
+      <div class="bn" id="qFinal"></div>
+      <p id="qMsg" style="font-weight:800;color:#3f6212"></p>
+      <button class="btn btn-l" onclick="resetQuiz()">🔄 جرّب تاني</button>
+    </div>
+  </section>
+
+  <!-- TASKS -->
+  <section id="tasks" class="reveal">
+    <h2>🎯 5 مهام مميزة — تحدي المبرمجين!</h2>
+    <div class="task t1">
+      <h4>🥉 المهمة 1: قائمة أصدقائك <span class="pts">20 نقطة</span></h4>
+      <p>اعمل <code>Listbox</code> فيها 8 أسماء، مع <code>Scrollbar</code> مربوط في الاتجاهين و<code>height=4</code> عشان التمرير يبان. زر "اعرض المحدد" يطبع الاسم في <code>Label</code>.</p>
+      <div class="hint">💡 <b>تلميح:</b> <code>Frame</code> + <code>bar.pack(side="right", fill="y")</code> + <code>yscrollcommand</code> + <code>bar.config(command=...)</code></div>
+    </div>
+    <div class="task t2">
+      <h4>🥉 المهمة 2: إضافة وحذف <span class="pts">25 نقطة</span></h4>
+      <p>زوّد <code>Entry</code> وزر "➕ أضف" يضيف الاسم في نهاية القائمة، وزر "🗑️ احذف" يحذف المحدد. لو مفيش تحديد أو الإدخال فاضي → <code>messagebox.showwarning</code>.</p>
+      <div class="hint">💡 <b>تلميح:</b> <code>insert(tk.END, text)</code> + <code>curselection()</code> + افحص <code>if not indices</code></div>
+    </div>
+    <div class="task t3">
+      <h4>🥈 المهمة 3: تحديد متعدد آمن <span class="pts">35 نقطة</span></h4>
+      <p>خلّي <code>selectmode="extended"</code>، وزر "احذف كل المحدد" يحذف بأمان من الآخر للأول، وزر "🧹 تفريغ" يمسح الكل بعد <code>askyesno</code>. اعرض عدد العناصر دايم بـ <code>size()</code>.</p>
+      <div class="hint">💡 <b>تلميح:</b> <code>for i in reversed(lb.curselection()): lb.delete(i)</code> والإفراغ بـ <code>delete(0, tk.END)</code></div>
+    </div>
+    <div class="task t4">
+      <h4>🥈 المهمة 4: جدول درجات Treeview <span class="pts">40 نقطة</span></h4>
+      <p>اعمل <code>ttk.Treeview</code> بأعمدة (الطالب / المادة / الدرجة) و<code>show="headings"</code> و<code>Scrollbar</code>. زوّد 10 صفوف، وخلّي رأس عمود "الدرجة" يفرز تنازلي عند الضغط.</p>
+      <div class="hint">💡 <b>تلميح:</b> <code>tv.heading("grade", text="الدرجة", command=sort)</code> + إعادة إدراج الصفوف بعد <code>sorted()</code></div>
+    </div>
+    <div class="task t5">
+      <h4>🎨 المهمة 5: متجر مصغّر كامل <span class="pts">60 نقطة</span></h4>
+      <p>اجمع الودجتين: <code>Treeview</code> للكتالوج (اسم/سعر/مخزون) + <code>Listbox</code> للسلة، وكل واحد بشريط تمرير. أضف: كمية من <code>Entry</code>، منع تجاوز المخزون، حذف متعدد، تفريغ، إجمالي، وعدد الأصناف. لون التحديد من اختيارك + <code>activestyle</code>.</p>
+      <div class="hint">💡 <b>تلميح:</b> خزّن السلة كـ <code>list</code> من <code>dict</code> وأعد بناء الـ Listbox في دالة <code>refresh()</code> — أسهل وأأمن من التعديل المباشر</div>
+    </div>
+    <div class="callout c-star"><b>📦 طريقة التسليم:</b> ملف <code>.py</code> + صورة للقائمة وعليها تحديد متعدد + صورة توضح شريط التمرير شغال + سطرين تشرح فيهم <b>السطرين</b> بتوع ربط الـ Scrollbar وليه لازم الاتنين. ارفعهم قبل المحاضرة الجاية! 📤</div>
+  </section>
+
+  <!-- SUMMARY -->
+  <section class="summary reveal">
+    <h2>📋 ملخص المحاضرة</h2>
+    <div class="sumgrid">
+      <div class="sumitem"><h4>➕ الإضافة</h4><code>lb.insert(tk.END, "نص")</code></div>
+      <div class="sumitem"><h4>🗑️ الحذف</h4><code>lb.delete(i)</code></div>
+      <div class="sumitem"><h4>🧹 الإفراغ</h4><code>lb.delete(0, tk.END)</code></div>
+      <div class="sumitem"><h4>📏 العدد</h4><code>lb.size()</code></div>
+      <div class="sumitem"><h4>📖 القراءة</h4><code>lb.get(i)</code></div>
+      <div class="sumitem"><h4>🎯 التحديد</h4><code>lb.curselection()</code></div>
+      <div class="sumitem"><h4>🎛️ الوضع</h4><code>selectmode="extended"</code></div>
+      <div class="sumitem"><h4>👁️ الإظهار</h4><code>lb.see(i)</code></div>
+      <div class="sumitem"><h4>↕️ ربط 1</h4><code>yscrollcommand=bar.set</code></div>
+      <div class="sumitem"><h4>↕️ ربط 2</h4><code>bar.config(command=lb.yview)</code></div>
+      <div class="sumitem"><h4>🌳 جدول</h4><code>ttk.Treeview(show="headings")</code></div>
+      <div class="sumitem"><h4>🌳 صف</h4><code>tv.insert("", END, values=row)</code></div>
+    </div>
+    <h3>🌟 القواعد الذهبية:</h3>
+    <ul class="golden">
+      <li>✅ الـ Scrollbar محتاج <b>سطرين ربط</b> — واحد لكل اتجاه، مش سطر واحد!</li>
+      <li>✅ <code>curselection()</code> بترجع <b>فهارس</b> — النص بـ <code>get(i)</code></li>
+      <li>✅ الحذف المتعدد دايماً <code>reversed()</code> من الآخر للأول</li>
+      <li>✅ <code>delete(0)</code> عنصر واحد · <code>delete(0, tk.END)</code> الكل</li>
+      <li>✅ <code>multiple</code>/<code>extended</code> للتحديد المتعدد · <code>browse</code> لواحد</li>
+      <li>✅ <code>Treeview</code> من <code>ttk</code>، وتحديدُه <b>iids</b> مش أرقام</li>
+      <li>✅ <code>fill="both", expand=True</code> عشان القائمة تملا المساحة</li>
+      <li>✅ خزّن البيانات في <code>list</code>/<code>dict</code> وأعد بناء القائمة — أأمن وأنضف 🧠</li>
+    </ul>
+  </section>
+
+  <!-- NEXT -->
+  <section class="next reveal">
+    <span class="big">🎨</span>
+    <h2>➡️ المحاضرة القادمة</h2>
+    <h3>Styling, Images &amp; CustomTkinter</h3>
+    <p>هنخلي واجهاتنا جميلة فعلاً: خطوط وألوان و<code>ttk.Style</code>، صور بـ <code>PhotoImage</code> وPillow، ونعمل الترقية لـ <b>CustomTkinter</b> مع زر 🌙/☀️ للوضع الليلي!</p>
+  </section>
+
+  <div class="footer reveal">
+    <div class="logo">☀️ Sunshine T Academy ☀️</div>
+    <p><b>بنحوّل الحلم لكود 💻</b></p>
+    <p>كل تطبيق عظيم بدأ بقائمة صغيرة — كمّل التجربة! 📜</p>
+  </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============ helpers ============ */
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2400)}
+function copyText(txt){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(()=>toast('✅ اتنسخ الكود!')).catch(()=>fbCopy(txt))}
+  else fbCopy(txt);
+}
+function fbCopy(t){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('✅ اتنسخ الكود!')}catch(e){toast('❌ انسخ يدوياً من فضلك')}a.remove()}
+
+/* safe python highlighter */
+function hl(code){
+  let s=esc(code);
+  const strs=[];
+  s=s.replace(/"(?:[^"\\\n]|\\.)*"/g,m=>{strs.push(m);const i=strs.length-1;
+    return '\u0001'+String.fromCharCode(65+(i%26))+String.fromCharCode(65+Math.floor(i/26))+'\u0001';});
+  s=s.replace(/#[^\n]*/g,m=>'<span class="cmt">'+m+'</span>');
+  s=s.replace(/\b(import|from|as|def|class|for|in|if|elif|else|while|return|True|False|None|with|try|except|finally|break|continue|lambda|not|and|or|global|raise|pass)\b/g,'<span class="kw">$1</span>');
+  s=s.replace(/\b(\d+(?:\.\d+)?)\b/g,'<span class="num">$1</span>');
+  s=s.replace(/\b([A-Za-z_]\w*)(?=\()/g,'<span class="fnc">$1</span>');
+  s=s.replace(/\u0001([A-Z]{2})\u0001/g,(m,g)=>{
+    const i=(g.charCodeAt(0)-65)+(g.charCodeAt(1)-65)*26;
+    return '<span class="str">'+strs[i]+'</span>';});
+  return s;
+}
+document.querySelectorAll('pre.code').forEach(p=>{p.innerHTML=hl(p.textContent)});
+document.querySelectorAll('.copybtn[data-copy]').forEach(b=>b.addEventListener('click',()=>copyText($(b.dataset.copy).textContent)));
+
+/* favicon PNG fallback */
+(function(){try{
+  const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');
+  x.fillStyle='#041c16';if(x.roundRect){x.beginPath();x.roundRect(0,0,64,64,14);x.fill()}else x.fillRect(0,0,64,64);
+  x.fillStyle='#a3e635';[[14,1],[25,.75],[36,.5],[47,.3]].forEach(r=>{x.globalAlpha=r[1];x.fillRect(10,r[0],30,5)});
+  x.globalAlpha=1;
+  x.fillStyle='#0b3b2e';x.fillRect(46,12,7,42);
+  x.fillStyle='#f59e0b';x.fillRect(46,12,7,18);
+  x.fillStyle='#fbbf24';x.beginPath();x.arc(25,9,4,0,7);x.fill();
+  const l=document.createElement('link');l.rel='icon';l.type='image/png';l.href=c.toDataURL('image/png');document.head.appendChild(l);
+}catch(e){}})();
+
+/* scroll + reveal + nav */
+const navLinks=[...document.querySelectorAll('.links a')];
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  $('readbar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  let cur='';
+  navLinks.forEach(a=>{const el=document.querySelector(a.getAttribute('href'));if(el&&el.getBoundingClientRect().top<170)cur=a.getAttribute('href')});
+  navLinks.forEach(a=>a.classList.toggle('on',a.getAttribute('href')===cur));
+},{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.06});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ============ LIST LAB ============ */
+const SEED=[
+ ["تفاح 🍎",6,12],["موز 🍌",4,8],["برتقال 🍊",3,10],["عنب 🍇",2,25],
+ ["مانجو 🥭",5,30],["فراولة 🍓",2,22],["بطيخ 🍉",1,45],["أناناس 🍍",1,38],
+ ["كيوي 🥝",4,28],["ليمون 🍋",8,9],["خوخ 🍑",3,26],["كمثرى 🍐",2,20],
+ ["تين 🫐",2,34],["رمان 🍒",3,18]
+];
+const DEF={widget:'listbox',mode:'browse',active:'underline',sort:'none',sortCol:'name',
+  height:8,font:14,sel:'#a3e635',bar:16,index:true,grid:true,linkA:true,linkB:true};
+let L={...DEF}, items=[], selected=new Set(), activeId=null, lastClicked=null, uid=1, barPos=0, plainCode='';
+
+function seed(){items=SEED.map(r=>({id:uid++,name:r[0],qty:r[1],price:r[2]}));selected.clear();activeId=null;lastClicked=null}
+seed();
+
+const scroller=$('lbScroll'), vBar=$('vBar'), vThumb=$('vThumb'), wrap=$('listWrap');
+function log(m){const b=$('labLog');const d=document.createElement('div');d.textContent=m;b.appendChild(d);
+  while(b.children.length>7)b.removeChild(b.firstChild);b.scrollTop=b.scrollHeight}
+function view(){
+  let v=[...items];
+  if(L.sort!=='none'){
+    const k=L.sortCol;
+    v.sort((a,b)=>{
+      const A=a[k],B=b[k];
+      const r=(typeof A==='number')?A-B:String(A).localeCompare(String(B),'ar');
+      return L.sort==='asc'?r:-r;
+    });
+  }
+  return v;
+}
+function rowH(){return Math.round(L.font*2.05)}
+function selIndices(){const v=view();const out=[];v.forEach((it,i)=>{if(selected.has(it.id))out.push(i)});return out}
+
+function renderRows(){
+  const v=view(), rh=rowH(), keep=scroller.scrollTop;
+  scroller.style.height=(L.height*rh)+'px';
+  wrap.classList.toggle('grid-on',L.grid&&L.widget==='treeview');
+  $('tvHead').style.display=L.widget==='treeview'?'grid':'none';
+  if(L.widget==='treeview'){
+    $('tvHead').style.gridTemplateColumns='1fr 74px 84px';
+    $('tvHead').style.fontSize=Math.max(10,L.font*.62)+'px';
+    $('arName').textContent=L.sortCol==='name'?(L.sort==='asc'?'↑':L.sort==='desc'?'↓':''):'';
+    $('arQty').textContent=L.sortCol==='qty'?(L.sort==='asc'?'↑':L.sort==='desc'?'↓':''):'';
+    $('arPrice').textContent=L.sortCol==='price'?(L.sort==='asc'?'↑':L.sort==='desc'?'↓':''):'';
+  }
+  if(!v.length){scroller.innerHTML='<div class="lbempty">📭 القائمة فاضية — ضيف عناصر!</div>'}
+  else{
+    scroller.innerHTML=v.map((it,i)=>{
+      const on=selected.has(it.id);
+      const act=activeId===it.id;
+      let cls='lbrow'+(on?' sel':'')+(act&&L.active==='underline'?' act-u':'')+(act&&L.active==='dotbox'?' act-d':'');
+      const style='height:'+rh+'px;font-size:'+L.font+'px;'+(on?'background:'+L.sel+';':'');
+      const ix=L.index?'<span class="ix">'+i+'</span>':'';
+      if(L.widget==='treeview'){
+        return '<div class="'+cls+'" data-id="'+it.id+'" data-i="'+i+'" style="'+style+'display:grid;grid-template-columns:1fr 74px 84px;gap:0">'+
+          '<span class="nm">'+ix+esc(it.name)+'</span><span class="qt">'+it.qty+'</span><span class="pr">'+it.price+' ج</span></div>';
+      }
+      return '<div class="'+cls+'" data-id="'+it.id+'" data-i="'+i+'" style="'+style+'">'+ix+
+        '<span class="nm">'+esc(it.name)+'</span><span class="qt">×'+it.qty+'</span><span class="pr">'+it.price+' ج</span></div>';
+    }).join('');
+    scroller.querySelectorAll('.lbrow').forEach(el=>{
+      el.addEventListener('click',ev=>pick(+el.dataset.id,+el.dataset.i,ev));
+    });
+  }
+  scroller.scrollTop=Math.min(keep,Math.max(0,scroller.scrollHeight-scroller.clientHeight));
+  vBar.style.width=L.bar+'px';
+  vBar.style.height=(L.height*rh)+'px';
+  syncBar(true);
+  stats();
+}
+function syncBar(force){
+  const sh=scroller.scrollHeight, ch=scroller.clientHeight;
+  const track=vBar.clientHeight;
+  const th=Math.max(22,sh>0?track*(ch/sh):track);
+  vThumb.style.height=th+'px';
+  if(L.linkA||force===true&&L.linkA){
+    const max=Math.max(1,sh-ch);
+    barPos=(scroller.scrollTop/max)*(track-th);
+  }
+  vThumb.style.top=Math.max(0,Math.min(track-th,barPos))+'px';
+  vThumb.classList.toggle('broken',!L.linkA||!L.linkB);
+}
+function stats(){
+  const idx=selIndices();
+  $('stSize').textContent=items.length;
+  $('stSel').textContent=idx.length?'('+idx.join(', ')+')':'()';
+  $('stMode').textContent=L.mode;
+  $('winTitle').textContent='List Lab — '+(L.widget==='listbox'?'Listbox':'Treeview');
+  const a=$('bgA'),b=$('bgB');
+  a.classList.toggle('off',!L.linkA);a.textContent=(L.linkA?'✅':'❌')+' yscrollcommand (lb ➜ bar)';
+  b.classList.toggle('off',!L.linkB);b.textContent=(L.linkB?'✅':'❌')+' command (bar ➜ lb)';
+}
+function pick(id,i,ev){
+  activeId=id;
+  if(L.mode==='browse'||L.mode==='single'){selected.clear();selected.add(id)}
+  else if(L.mode==='multiple'){selected.has(id)?selected.delete(id):selected.add(id)}
+  else{
+    if(ev.shiftKey&&lastClicked!==null){
+      const v=view();const a=Math.min(lastClicked,i),b=Math.max(lastClicked,i);
+      if(!ev.ctrlKey&&!ev.metaKey)selected.clear();
+      for(let k=a;k<=b;k++)selected.add(v[k].id);
+    }else if(ev.ctrlKey||ev.metaKey){selected.has(id)?selected.delete(id):selected.add(id)}
+    else{selected.clear();selected.add(id)}
+  }
+  lastClicked=i;
+  renderRows();buildCode();
+  log('🎯 click index '+i+' ('+L.mode+') → curselection() = '+($('stSel').textContent));
+}
+scroller.addEventListener('scroll',()=>{
+  if(L.linkA)syncBar();
+  else log('⚠️ scrolled لكن yscrollcommand مقفول → المؤشر ما اتحركش!');
+},{passive:true});
+
+/* thumb drag + track click */
+let drag=null;
+vThumb.addEventListener('pointerdown',e=>{
+  drag={sy:e.clientY,start:barPos};vThumb.setPointerCapture(e.pointerId);e.preventDefault();e.stopPropagation();
+});
+vThumb.addEventListener('pointermove',e=>{
+  if(!drag)return;
+  const track=vBar.clientHeight,th=vThumb.offsetHeight,max=Math.max(1,track-th);
+  const np=Math.max(0,Math.min(max,drag.start+(e.clientY-drag.sy)));
+  if(L.linkB){
+    barPos=np;vThumb.style.top=np+'px';
+    scroller.scrollTop=(np/max)*Math.max(0,scroller.scrollHeight-scroller.clientHeight);
+  }else{
+    log('❌ سحب المؤشر لكن command مقفول → القائمة ما اتمرّرتش!');
+    toast('❌ command مقفول — الشريط مش بيأمر القائمة!');
+  }
+});
+vThumb.addEventListener('pointerup',()=>{if(drag){drag=null;if(L.linkB)log('↕️ drag thumb → lb.yview() اشتغل ✅')}});
+vBar.addEventListener('click',e=>{
+  if(e.target===vThumb)return;
+  if(!L.linkB){toast('❌ command مقفول!');log('❌ track click بلا command');return}
+  const r=vBar.getBoundingClientRect(),th=vThumb.offsetHeight,track=vBar.clientHeight;
+  const np=Math.max(0,Math.min(track-th,(e.clientY-r.top)-th/2));
+  scroller.scrollTop=(np/Math.max(1,track-th))*Math.max(0,scroller.scrollHeight-scroller.clientHeight);
+  log('↕️ track click → yview_moveto()');
+});
+
+/* ============ code generation ============ */
+function buildCode(){
+  const v=view();
+  const rowsTxt=v.map(it=>'    ("'+it.name+'", '+it.qty+', '+it.price+'),').join('\n');
+  const namesTxt=v.map(it=>'    "'+it.name+'  ×'+it.qty+'  =  '+it.qty*it.price+' ج",').join('\n');
+  let p='';
+  if(L.widget==='listbox'){
+p=`import tkinter as tk
+from tkinter import messagebox
+
+root = tk.Tk()
+root.title("List Lab — Listbox")
+root.geometry("440x460")
+root.configure(bg="#f3f8f4")
+
+frame = tk.Frame(root, bg="#f3f8f4")
+frame.pack(fill="both", expand=True, padx=14, pady=14)
+
+# 1) الشريط
+bar = tk.Scrollbar(frame, orient="vertical", width=${L.bar})
+bar.pack(side="right", fill="y")
+
+# 2) القائمة + الاتجاه الأول
+lb = tk.Listbox(
+    frame,
+    height=${L.height},
+    selectmode="${L.mode}",
+    activestyle="${L.active}",
+    font=("Arial", ${L.font}),
+    selectbackground="${L.sel}",
+    selectforeground="#0c2b22",
+    yscrollcommand=bar.set,
+)
+lb.pack(side="left", fill="both", expand=True)
+
+# 3) الاتجاه الثاني
+bar.config(command=lb.yview)
+
+items = [
+${namesTxt}
+]
+for text in items:
+    lb.insert(tk.END, text)
+
+
+def show_selected():
+    indices = lb.curselection()
+    if not indices:
+        messagebox.showwarning("تنبيه", "اختار عنصر الأول!")
+        return
+    names = [lb.get(i) for i in indices]
+    print("اخترت:", names)
+
+
+def delete_selected():
+    for i in reversed(lb.curselection()):
+        lb.delete(i)
+    print("عدد العناصر الآن:", lb.size())
+
+
+btns = tk.Frame(root, bg="#f3f8f4")
+btns.pack(fill="x", padx=14, pady=(0, 12))
+tk.Button(btns, text="اعرض المحدد", command=show_selected).pack(side="right", expand=True, fill="x", padx=3)
+tk.Button(btns, text="احذف المحدد", command=delete_selected).pack(side="right", expand=True, fill="x", padx=3)
+
+root.mainloop()`;
+  }else{
+p=`import tkinter as tk
+from tkinter import ttk, messagebox
+
+root = tk.Tk()
+root.title("List Lab — Treeview")
+root.geometry("520x460")
+root.configure(bg="#f3f8f4")
+
+frame = tk.Frame(root, bg="#f3f8f4")
+frame.pack(fill="both", expand=True, padx=14, pady=14)
+
+bar = tk.Scrollbar(frame, orient="vertical", width=${L.bar})
+bar.pack(side="right", fill="y")
+
+cols = ("item", "qty", "price")
+tv = ttk.Treeview(
+    frame,
+    columns=cols,
+    show="headings",
+    height=${L.height},
+    selectmode="${L.mode}",
+    yscrollcommand=bar.set,
+)
+tv.heading("item", text="المنتج")
+tv.heading("qty", text="الكمية")
+tv.heading("price", text="السعر")
+tv.column("item", width=200, anchor="w")
+tv.column("qty", width=74, anchor="center")
+tv.column("price", width=84, anchor="center")
+tv.pack(side="left", fill="both", expand=True)
+bar.config(command=tv.yview)
+
+# تنسيق لون التحديد
+style = ttk.Style()
+style.theme_use("clam")
+style.configure("Treeview", font=("Arial", ${L.font}), rowheight=${Math.round(L.font*2.05)})
+style.map("Treeview", background=[("selected", "${L.sel}")],
+          foreground=[("selected", "#0c2b22")])
+
+rows = [
+${rowsTxt}
+]
+for row in rows:
+    tv.insert("", tk.END, values=row)
+
+
+def show_selected():
+    sel = tv.selection()
+    if not sel:
+        messagebox.showwarning("تنبيه", "حدّد صف الأول!")
+        return
+    for iid in sel:
+        print("الصف:", tv.item(iid, "values"))
+
+
+def delete_selected():
+    for iid in tv.selection():
+        tv.delete(iid)
+
+
+def sort_by(col_index, reverse=False):
+    data = [tv.item(i, "values") for i in tv.get_children()]
+    data.sort(key=lambda r: r[col_index], reverse=reverse)
+    for iid in list(tv.get_children()):
+        tv.delete(iid)
+    for row in data:
+        tv.insert("", tk.END, values=row)
+
+
+tv.heading("price", text="السعر", command=lambda: sort_by(2, True))
+
+btns = tk.Frame(root, bg="#f3f8f4")
+btns.pack(fill="x", padx=14, pady=(0, 12))
+tk.Button(btns, text="اعرض الصف", command=show_selected).pack(side="right", expand=True, fill="x", padx=3)
+tk.Button(btns, text="احذف الصف", command=delete_selected).pack(side="right", expand=True, fill="x", padx=3)
+
+root.mainloop()`;
+  }
+  if(!L.linkA)p=p.replace('    yscrollcommand=bar.set,\n','    # yscrollcommand=bar.set,   # ❌ مقفول: المؤشر ما يتحركش\n');
+  if(!L.linkB)p=p.replace('bar.config(command=lb.yview)','# bar.config(command=lb.yview)   # ❌ مقفول: السحب ما يمرّرش')
+                 .replace('bar.config(command=tv.yview)','# bar.config(command=tv.yview)   # ❌ مقفول: السحب ما يمرّرش');
+  plainCode=p;
+  $('labCode').innerHTML=hl(p);
+  $('labFile').textContent='list_lab_'+L.widget+'.py — بيتولد لايف ⚡';
+  const w=$('labCodeWrap');w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash');
+}
+function render(){renderRows();buildCode()}
+
+/* ============ controls ============ */
+$('segWidget').addEventListener('click',e=>{const b=e.target.closest('button[data-w]');if(!b)return;
+  L.widget=b.dataset.w;[...$('segWidget').children].forEach(x=>x.classList.toggle('on',x===b));
+  log('🧩 widget → '+L.widget);render()});
+$('cMode').addEventListener('change',e=>{L.mode=e.target.value;selected.clear();activeId=null;log('🎛️ selectmode="'+L.mode+'"');render()});
+$('cActive').addEventListener('change',e=>{L.active=e.target.value;log('📍 activestyle="'+L.active+'"');render()});
+$('cSort').addEventListener('change',e=>{L.sort=e.target.value;lastClicked=null;log('🔃 sort="'+L.sort+'" on '+L.sortCol);render()});
+$('tvHead').addEventListener('click',e=>{const s=e.target.closest('span[data-col]');if(!s)return;
+  const c=s.dataset.col;
+  if(L.sortCol===c){L.sort=L.sort==='asc'?'desc':'asc'}else{L.sortCol=c;L.sort='asc'}
+  $('cSort').value=L.sort;lastClicked=null;log('🖱️ heading click → sort by '+c+' '+L.sort);render()});
+$('cHeight').addEventListener('input',e=>{L.height=+e.target.value;$('oHeight').textContent=L.height;render()});
+$('cFont').addEventListener('input',e=>{L.font=+e.target.value;$('oFont').textContent=L.font;render()});
+$('cBar').addEventListener('input',e=>{L.bar=+e.target.value;$('oBar').textContent=L.bar;render()});
+$('cSel').addEventListener('input',e=>{L.sel=e.target.value;render()});
+document.querySelectorAll('.sw[data-c]').forEach(b=>b.addEventListener('click',()=>{L.sel=b.dataset.c;$('cSel').value=L.sel;log('🎨 selectbackground="'+L.sel+'"');render()}));
+$('cIndex').addEventListener('change',e=>{L.index=e.target.checked;render()});
+$('cGrid').addEventListener('change',e=>{L.grid=e.target.checked;render()});
+$('cLinkA').addEventListener('change',e=>{L.linkA=e.target.checked;
+  log(L.linkA?'✅ yscrollcommand ON → المؤشر بيتحرك':'❌ yscrollcommand OFF → المؤشر متجمّد!');
+  toast(L.linkA?'✅ الربط الأول شغال':'❌ الربط الأول مقفول — جرّب التمرير!');render()});
+$('cLinkB').addEventListener('change',e=>{L.linkB=e.target.checked;
+  log(L.linkB?'✅ command ON → السحب بيمرّر':'❌ command OFF → السحب مش بيمرّر!');
+  toast(L.linkB?'✅ الربط الثاني شغال':'❌ الربط الثاني مقفول — جرّب تسحب المؤشر!');render()});
+
+/* add */
+function addItem(){
+  const n=$('addName').value.trim();
+  const q=Math.max(1,Math.min(99,parseInt($('addQty').value)||1));
+  if(!n){toast('✏️ اكتب اسم المنتج الأول!');return}
+  items.push({id:uid++,name:n,qty:q,price:5+Math.floor(Math.random()*40)});
+  $('addName').value='';
+  render();
+  scroller.scrollTop=scroller.scrollHeight;
+  log('➕ lb.insert(tk.END, "'+n+'") → size()='+items.length);
+  toast('✅ اتضاف في النهاية!');
+}
+$('addBtn').addEventListener('click',addItem);
+$('addName').addEventListener('keydown',e=>{if(e.key==='Enter')addItem()});
+$('bDel').addEventListener('click',()=>{
+  const idx=selIndices();
+  if(!idx.length){toast('⚠️ حدّد عنصر الأول!');return}
+  [...idx].reverse().forEach(i=>{const v=view();items=items.filter(x=>x.id!==v[i].id)});
+  selected.clear();activeId=null;lastClicked=null;render();
+  log('🗑️ reversed('+idx.join(',')+') → delete → size()='+items.length);
+  toast('🗑️ اتحذف '+idx.length+' عنصر (من الآخر للأول ✅)');
+});
+$('bShuffle').addEventListener('click',()=>{
+  for(let i=items.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[items[i],items[j]]=[items[j],items[i]]}
+  L.sort='none';$('cSort').value='none';selected.clear();lastClicked=null;render();log('🔀 random.shuffle(items)');toast('🔀 اتخلطت القائمة!')});
+$('bSeed').addEventListener('click',()=>{seed();
+  items.forEach(it=>{it.qty=1+Math.floor(Math.random()*8);it.price=5+Math.floor(Math.random()*45)});
+  render();log('🎲 بيانات جديدة → size()='+items.length);toast('🎲 بيانات جديدة!')});
+$('bReset').addEventListener('click',()=>{L={...DEF};seed();barPos=0;scroller.scrollTop=0;syncInputs();render();
+  $('mout').textContent='# اضغط أي دالة فوق لتشوف الكود والنتيجة الحقيقية…';log('♻️ reset');toast('♻️ رجعنا للإعدادات الأصلية!')});
+$('bCopy').addEventListener('click',()=>copyText(plainCode));
+$('bCopy2').addEventListener('click',()=>copyText(plainCode));
+
+function syncInputs(){
+  [...$('segWidget').children].forEach(x=>x.classList.toggle('on',x.dataset.w===L.widget));
+  $('cMode').value=L.mode;$('cActive').value=L.active;$('cSort').value=L.sort;
+  $('cHeight').value=L.height;$('oHeight').textContent=L.height;
+  $('cFont').value=L.font;$('oFont').textContent=L.font;
+  $('cBar').value=L.bar;$('oBar').textContent=L.bar;
+  $('cSel').value=L.sel;$('cIndex').checked=L.index;$('cGrid').checked=L.grid;
+  $('cLinkA').checked=L.linkA;$('cLinkB').checked=L.linkB;
+}
+
+/* ============ methods playground ============ */
+$('methods').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-m]');if(!b)return;
+  const m=b.dataset.m,out=$('mout'),v=view(),idx=selIndices();
+  const pre=L.widget==='listbox'?'lb':'tv';
+  let code='',res='';
+  switch(m){
+    case 'size':
+      code=L.widget==='listbox'?'n = lb.size()':'n = len(tv.get_children())';
+      res='→ '+items.length+'   (int)';break;
+    case 'getall':
+      code=L.widget==='listbox'?'all_items = lb.get(0, tk.END)':'rows = [tv.item(i,"values") for i in tv.get_children()]';
+      res='→ '+(L.widget==='listbox'?JSON.stringify(v.map(x=>x.name+'  ×'+x.qty)):JSON.stringify(v.map(x=>[x.name,x.qty,x.price])));break;
+    case 'cur':
+      code=L.widget==='listbox'?'indices = lb.curselection()':'ids = tv.selection()';
+      res='→ '+(L.widget==='listbox'?(idx.length?'('+idx.join(', ')+')':'()  ← مفيش تحديد'):(idx.length?idx.length+' iid(s) محددة':'()  ← مفيش تحديد'));break;
+    case 'insert':
+      const nm='منتج جديد 🎁';
+      items.push({id:uid++,name:nm,qty:1,price:15});render();scroller.scrollTop=scroller.scrollHeight;
+      code=L.widget==='listbox'?'lb.insert(tk.END, "'+nm+'")':'tv.insert("", tk.END, values=("' +nm+ '", 1, 15))';
+      res='✅ اتضاف في النهاية → size()='+items.length;break;
+    case 'del':
+      if(!idx.length){code='indices = '+pre+'.curselection()';res='⚠️ () فاضي — لازم تفحص قبل الحذف!';break}
+      code=L.widget==='listbox'?'for i in reversed(lb.curselection()):\n    lb.delete(i)':'for iid in tv.selection():\n    tv.delete(iid)';
+      [...idx].reverse().forEach(i=>{const vv=view();items=items.filter(x=>x.id!==vv[i].id)});
+      selected.clear();activeId=null;render();
+      res='🗑️ اتحذف '+idx.length+' عنصر → size()='+items.length;break;
+    case 'clear':
+      code=L.widget==='listbox'?'lb.delete(0, tk.END)':'for iid in list(tv.get_children()):\n    tv.delete(iid)';
+      items=[];selected.clear();activeId=null;render();res='🧹 القائمة فضيت → size()=0';break;
+    case 'sel0':
+      code=L.widget==='listbox'?'lb.selection_set(0)':'tv.selection_set(tv.get_children()[0])';
+      if(v.length){selected.clear();selected.add(v[0].id);activeId=v[0].id;render();res='✅ أول عنصر اتحدد → curselection()=(0,)'}
+      else res='⚠️ القائمة فاضية!';break;
+    case 'selclear':
+      code=L.widget==='listbox'?'lb.selection_clear(0, tk.END)':'tv.selection_remove(tv.selection())';
+      selected.clear();activeId=null;render();res='❌ التحديد اتشال → curselection()=()';break;
+    case 'see':
+      code=L.widget==='listbox'?'lb.see(lb.size() - 1)':'tv.see(tv.get_children()[-1])';
+      scroller.scrollTop=scroller.scrollHeight;if(L.linkA)syncBar();
+      res=L.linkA?'👁️ مرّر لآخر عنصر والمؤشر اتحرك ✅':'👁️ مرّر بس المؤشر ما اتحركش ❌ (yscrollcommand مقفول)';break;
+    case 'reverse':
+      code='for i in reversed(lb.curselection()):\n    lb.delete(i)';
+      if(!idx.length){res='⚠️ حدّد أكتر من عنصر الأول (Ctrl+ضغط) عشان تشوف الفرق!';break}
+      res='🔁 الحذف من الآخر للأول بيحمي الفهارس.\nلو حذفت من الأول للآخر، الفهارس بتتغير وبتحذف عناصر غلط!';break;
+  }
+  out.textContent=code+'\n'+res;log('🔬 '+m+'() executed');
+});
+
+syncInputs();render();
+window.addEventListener('resize',()=>{syncBar()});
+
+/* ============ binding flow ============ */
+const flowN=[...document.querySelectorAll('#flowNodes .node')];
+const FLOW=[
+ '🖱️ [1] المستخدم مسك المؤشر وسحبه لتحت...',
+ '📤 [2] Scrollbar بينادي: command=lb.yview  ➜  yview_moveto(0.42)',
+ '📜 [3] Listbox اتمرّرت — الصفوف اللي فوق اختفت والجديدة ظهرت',
+ '🔙 [4] Listbox بلّغ الشريط: yscrollcommand=bar.set(0.42, 0.68) ➜ المؤشر اتحدّث ✅'
+];
+let flowT=[];
+function flowReset(){flowT.forEach(clearTimeout);flowT=[];flowN.forEach(n=>n.classList.remove('hot','dead'));
+  $('flowOut').textContent='اضغط "شغّل رحلة التمرير" عشان تشوف الحلقة الكاملة...'}
+$('flowReset').addEventListener('click',flowReset);
+$('flowRun').addEventListener('click',()=>{
+  flowReset();
+  flowN.forEach((n,i)=>{
+    flowT.push(setTimeout(()=>{
+      flowN.forEach(x=>x.classList.remove('hot'));
+      n.classList.add('hot');
+      let txt=FLOW[i];
+      if(i===1&&!L.linkB){n.classList.add('dead');txt='❌ [2] command مقفول! السحب مش بيوصل للقائمة — الحلقة اتكسرت هنا.'}
+      if(i===3&&!L.linkA){n.classList.add('dead');txt='❌ [4] yscrollcommand مقفول! القائمة اتمرّرت بس المؤشر ما اتحركش.'}
+      $('flowOut').textContent=txt;
+      if(i===3)flowT.push(setTimeout(()=>{n.classList.remove('hot');
+        $('flowOut').textContent=txt+(L.linkA&&L.linkB?'\n🔁 الحلقة كاملة — التمرير والمؤشر متزامنان ✅':'\n⚠️ صلّح المفتاحين في المختبر وجرّب تاني!')},900));
+    },i*950));
+  });
+});
+
+/* ============ QUIZ ============ */
+const QUIZ=[
+ {q:'الـ Listbox بتستخدم في إيه؟',o:['كتابة نص حر متعدد الأسطر','عرض قائمة عناصر المستخدم يختار منها','رسم أشكال','حفظ ملفات'],a:1,w:'Listbox بتعرض عناصر منفصلة (صفوف) والمستخدم يحدد منها — مش يكتب فيها. للكتابة نستخدم Entry أو Text.'},
+ {q:'ماذا يفعل lb.insert(tk.END, "تفاح")؟',o:['يضيف "تفاح" في البداية','يضيف "تفاح" في النهاية','يحذف "تفاح"','يستبدل أول عنصر'],a:1,w:'tk.END معناها نهاية القائمة، فالعنصر الجديد يتضاف في الآخر. لو كتبت insert(0, ...) يتضاف في البداية.'},
+ {q:'ماذا ترجع lb.curselection()؟',o:['نصوص العناصر المحددة','tuple بأرقام الفهارس المحددة','عدد العناصر','نص واحد'],a:1,w:'بترجع tuple فهارس مثل (0, 2). عشان تجيب النص لازم lb.get(i) لكل فهرس.'},
+ {q:'عايز المستخدم يختار كذا عنصر مع بعض. تستخدم أي selectmode؟',o:['browse','single','multiple أو extended','none'],a:2,w:'multiple تخلي كل ضغطة تعكس العنصر، وextended تدعم Ctrl و Shift. browse و single يسمحان بعنصر واحد فقط.'},
+ {q:'ما الفرق بين lb.delete(0) و lb.delete(0, tk.END)؟',o:['لا فرق','الأولى تحذف عنصراً واحداً والثانية تمسح الكل','الأولى تمسح الكل','الثانية تحذف الأول فقط'],a:1,w:'delete بفهرس واحد يحذف عنصراً واحداً. لازم حدّين (0, tk.END) للإفراغ الكامل.'},
+ {q:'ماذا ترجع lb.size()؟',o:['عدد العناصر كعدد صحيح','آخر عنصر','طول النص','قائمة العناصر'],a:0,w:'size() ترجع عدد الصفوف في القائمة كـ int — مفيدة لعرض العدد للمستخدم.'},
+ {q:'ما الربط الصحيح بين Listbox و Scrollbar؟',o:['سطر واحد فقط يكفي','yscrollcommand=bar.set + bar.config(command=lb.yview)','command=bar.set فقط','scrollbar=lb فقط'],a:1,w:'لازم اتجاهان: القائمة تبلّغ الشريط بـ yscrollcommand، والشريط يأمر القائمة بـ command. سطر واحد يعطي سلوكاً ناقصاً.'},
+ {q:'لو نسيت bar.config(command=lb.yview) فقط، ماذا يحدث؟',o:['التمرير لا يعمل نهائياً','سحب المؤشر لا يمرّر القائمة','المؤشر لا يتحرك عند التمرير','يحدث خطأ Syntax'],a:1,w:'هذا هو اتجاه الشريط ➜ القائمة. نسيانه يعني سحب المؤشر لا يمرّر. أما نسيان yscrollcommand فيجمّد المؤشر.'},
+ {q:'ttk.Treeview تأتي من أي استيراد؟',o:['import tkinter as tk','from tkinter import ttk','from tkinter import messagebox','import treeview'],a:1,w:'Treeview من مكتبة tkinter.ttk (Themed Tkinter) — لازم from tkinter import ttk.'},
+ {q:'ماذا تفعل show="headings" في Treeview؟',o:['تخفي كل الأعمدة','تخفي عمود الشجرة وتظهر صف العناوين فقط','تضيف عموداً جديداً','تجعل الجدول للقراءة فقط'],a:1,w:'افتراضياً Treeview يعرض عمود شجرة (#0). show="headings" يخفيه ويترك أعمدة البيانات مع صف العناوين — شكل جدول عادي.'}
+];
+let qScore=0,qDone=0;
+function buildQuiz(){
+  const box=$('quizBox');box.innerHTML='';qScore=0;qDone=0;
+  $('qScore').textContent='النتيجة: 0 / 10';$('qRes').classList.remove('show');
+  QUIZ.forEach((item,i)=>{
+    const card=document.createElement('div');card.className='qcard';
+    const h=document.createElement('h4');h.textContent='س'+(i+1)+': '+item.q;card.appendChild(h);
+    const opts=document.createElement('div');opts.className='qopts';
+    item.o.forEach((opt,j)=>{
+      const b=document.createElement('button');b.className='qopt';b.textContent=opt;
+      b.addEventListener('click',()=>{
+        if(opts.dataset.done)return;opts.dataset.done='1';
+        opts.querySelectorAll('.qopt').forEach(x=>x.disabled=true);
+        if(j===item.a){b.classList.add('ok');b.textContent+=' ✅';qScore++}
+        else{b.classList.add('bad');b.textContent+=' ❌';opts.children[item.a].classList.add('ok');opts.children[item.a].textContent+=' ✅'}
+        const why=document.createElement('div');why.className='qwhy show';why.textContent='💡 '+item.w;card.appendChild(why);
+        qDone++;$('qScore').textContent='النتيجة: '+qScore+' / 10';
+        if(qDone===QUIZ.length)finishQuiz();
+      });
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);box.appendChild(card);
+  });
+}
+function finishQuiz(){
+  const r=$('qRes');r.classList.add('show');
+  $('qFinal').textContent=qScore+' / 10';
+  $('qMsg').textContent=qScore>=9?'🏆 أسطوري! إنت جاهز تبني قوائم وجداول زي المحترفين!'
+    :qScore>=7?'🌟 ممتاز جداً! راجع الأسئلة اللي غلطت فيها وبس.'
+    :qScore>=5?'👍 كويس! ارجع للمختبر وجرّب مفاتيح الربط بإيدك.'
+    :'💪 ولا يهمك! اقرأ الملخص وجرّب المختبر تاني — هتظبط!';
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function resetQuiz(){buildQuiz();$('quiz').scrollIntoView({behavior:'smooth'})}
+buildQuiz();
+</script>
+</body>
+</html>
